@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Request, Response, NextFunction } from "express";
 import connectDB from "./db/mongoDatabase"; //.ts extension is not required
+import { ErrorMiddleware } from "./middleware/error";
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const PORT = process.env.PORT;
 
 //middleware
 app.use(cookieParser());
+
 app.use(express.json({ limit: "50mb" }));
 app.use(
   cors({
@@ -34,3 +36,5 @@ app.all("*", (req: Request, res: Response, next: NextFunction) => {
   err.status = 404;
   next(err);
 });
+
+app.use(ErrorMiddleware);
