@@ -17,7 +17,7 @@ The full-stack LMS platform will include:
 - [Technologies Used](#technologies-used)
 - [Features](#features)
 - [Project Structure](#project-structure)
-- [Installation & Setup](#installation-setup)
+- [Installation & Setup](#installation--setup)
 - [Video Series Timestamps](#video-series-timestamps)
 - [Follow Me](#follow-me)
 - [License](#license)
@@ -78,20 +78,21 @@ This project is built using the following technologies:
 
 ## Project Structure
 
-## Installation & Setup
-
-Follow these steps to set up and run the LMS project locally.
-
-### 1. Clone the repository
-
-````bash
-git clone https://github.com/yourusername/lms-project.git
-cd lms-project
-
-├── client (Frontend: React/Next.js) │ ├── components (Reusable components) │ ├── pages (Next.js pages) │ ├── public (Static files like images) │ └── styles (CSS styles with Tailwind) ├── server (Backend: Node/Express) │ ├── models (MongoDB models) │ ├── routes (API endpoints) │ ├── controllers (API logic) │ └── config (Configuration files) ├── README.md └── .env (Environment variables)
-
-bash
-Copy code
+```
+lms-project/
+├── client (Frontend: React/Next.js)
+│   ├── components (Reusable components)
+│   ├── pages (Next.js pages)
+│   ├── public (Static files like images)
+│   └── styles (CSS styles with Tailwind)
+├── server (Backend: Node/Express)
+│   ├── models (MongoDB models)
+│   ├── routes (API endpoints)
+│   ├── controllers (API logic)
+│   └── config (Configuration files)
+├── README.md
+└── .env (Environment variables)
+```
 
 ## Installation & Setup
 
@@ -102,47 +103,60 @@ Follow these steps to set up and run the LMS project locally.
 ```bash
 git clone https://github.com/yourusername/lms-project.git
 cd lms-project
-2. Install dependencies
-Backend
+```
+
+### 2. Install dependencies
+
+#### Backend
+
 Navigate to the server folder and install dependencies:
 
-bash
-Copy code
+```bash
 cd server
 npm install
-Frontend
+```
+
+#### Frontend
+
 Navigate to the client folder and install dependencies:
 
-bash
-Copy code
+```bash
 cd client
 npm install
-3. Set up environment variables
-Create a .env file in the server folder and add your MongoDB URI, JWT secret, Redis config, and other required environment variables.
+```
 
-Example .env:
+### 3. Set up environment variables
 
-env
-Copy code
+Create a `.env` file in the server folder and add your MongoDB URI, JWT secret, Redis config, and other required environment variables.
+
+Example `.env`:
+
+```env
 MONGODB_URI=mongodb://localhost:27017/lms
 JWT_SECRET=your_jwt_secret
 REDIS_HOST=localhost
 REDIS_PORT=6379
 CLOUDINARY_URL=your_cloudinary_url
-4. Run the project
-Backend
+```
+
+### 4. Run the project
+
+#### Backend
+
 Start the server:
 
-bash
-Copy code
+```bash
 cd server
 npm run dev
-Frontend
+```
+
+#### Frontend
+
 Start the React frontend:
 
-bash
-Copy code
+```bash
 cd client
 npm run dev
-Your LMS should now be running at http://localhost:3000.
-````
+```
+
+Your LMS should now be running at [http://localhost:3000](http://localhost:3000).
