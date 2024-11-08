@@ -87,23 +87,20 @@ userSchema.pre<IUser>("save", async function (next) {
 
 // sign access token
 userSchema.methods.SignAcessToken = function () {
-  return jwt.sign({ id: this._id }, process.env.ACESS_TOKEN || "", {
-    expiresIn: "",
-  });
+  return jwt.sign({ id: this._id }, process.env.ACESS_TOKEN || "");
 };
 
 //sign Refresh token
 userSchema.methods.SignRefreshToken = function () {
-  return jwt.sign({ id: this._id }, process.env.ACESS_TOKEN || "", {
-    expiresIn: "",
-  });
+  return jwt.sign({ id: this._id }, process.env.ACESS_TOKEN || "");
 };
 
 // compare user password
 userSchema.methods.comparePassword = async function (
   enteredPassword: string
 ): Promise<boolean> {
-  return await bcryptjs.compare(enteredPassword, this.password);
+  const user = await this.model("User").findById(this._id).select("+password");
+  return await bcryptjs.compare(enteredPassword, user.password);
 };
 
 const User: Model<IUser> = mongoose.model("User", userSchema);
