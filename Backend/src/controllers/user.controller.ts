@@ -49,13 +49,11 @@ export const registrationUser = CatchAsyncError(
         res.status(201).json({
           success: true,
           message: `Please check your email:${user.email} to activate your account`,
+          activationToken: activationToken.token,
         });
-      } catch (error: any) {}
-      res.status(201).json({
-        success: true,
-        message: "Account Registered Successfully",
-        activationToken: activationToken.token,
-      });
+      } catch (error: any) {
+        return next(new ErrorHandler(400, error.message));
+      }
     } catch (error: any) {
       return next(new ErrorHandler(400, error.message));
     }

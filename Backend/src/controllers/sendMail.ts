@@ -12,14 +12,15 @@ interface EMailOptions {
 const sendMail = async (options: EMailOptions): Promise<void> => {
   const transporter: Transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || "587"),
+    port: Number(process.env.SMTP_PORT),
     service: process.env.SMTP_SERVICE,
-    secure: false,
+    secure: process.env.SMTP_PORT === "465", // true for port 465, false for other ports
     auth: {
-      user: process.env.SMTP_EMAIL,
+      user: process.env.SMTP_MAIL,
       pass: process.env.SMTP_PASSWORD,
     },
   });
+
   const { email, subject, template, data } = options;
   //get the path to the email template file
   const templatePath = path.join(__dirname, "../mails", template);
