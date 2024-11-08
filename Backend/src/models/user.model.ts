@@ -3,7 +3,7 @@ import bcryptjs from "bcryptjs";
 
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-interface IUser extends Document {
+export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
@@ -17,7 +17,7 @@ interface IUser extends Document {
   comparePassword: (enteredPassword: string) => Promise<boolean>;
 }
 
-const userSchema: Schema = new mongoose.Schema(
+const userSchema: Schema<IUser> = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -34,6 +34,7 @@ const userSchema: Schema = new mongoose.Schema(
           return emailRegexPattern.test(email);
         },
         message: "Please enter a valid email address",
+        unique: true,
       },
     },
     password: {
@@ -77,6 +78,7 @@ userSchema.pre<IUser>("save", async function (next) {
     next();
   }
   this.password = await bcryptjs.hash(this.password, 10);
+  next();
 });
 
 // compare user password
@@ -86,5 +88,7 @@ userSchema.methods.comparePassword = async function (
   return await bcryptjs.compare(enteredPassword, this.password);
 };
 
-const userModel: Model<IUser> = mongoose.model("User", userSchema);
-export default userModel;
+const User: Model<IUser> = mongoose.model("User", userSchema);
+export default User;
+
+//

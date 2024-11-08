@@ -3,8 +3,8 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import express, { Request, Response, NextFunction } from "express";
 import connectDB from "./db/mongoDatabase"; //.ts extension is not required
-import { ErrorMiddleware } from "./middleware/error";
-
+import { ErrorMiddleware } from "./middlewares/error";
+import userRoutes from "./routes/user.routes";
 dotenv.config();
 
 const app = express();
@@ -21,6 +21,10 @@ app.use(
   })
 );
 
+//
+
+//
+app.use("/api/v1", userRoutes);
 app.get("/", (req, res, next) => {
   res.send("Hello World");
 });
