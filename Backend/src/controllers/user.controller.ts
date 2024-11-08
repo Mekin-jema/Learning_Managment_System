@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import User, { IUser } from "../models/user.model";
 import ErrorHandler from "../utils/ErrorHandler";
+import { redis } from "../db/redisDatabase";
 import jwt, { Secret } from "jsonwebtoken";
 import ejs from "ejs";
 import path from "path";
@@ -157,9 +158,16 @@ export const logoutUser = CatchAsyncError(
     try {
       res.cookie("access_token", "", { maxAge: 1 });
       res.cookie("refresh_token", "", { maxAge: 1 });
+
+      if (req.user?._id) {
+        await redis.del(req.user._id.toString()); // Here is also another problem i face and fix it
+      } else {
+        return next(new ErrorHandler(400, "User not authenticated"));
+      }
+
       res.status(200).json({
         success: true,
-        message: "User Logout successfully",
+        message: "User logged out successfully",
       });
     } catch (error: any) {
       return next(new ErrorHandler(400, error.message));
