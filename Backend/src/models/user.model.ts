@@ -1,5 +1,8 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import bcryptjs from "bcryptjs";
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+dotenv.config();
 
 const emailRegexPattern: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -15,6 +18,8 @@ export interface IUser extends Document {
   isVerified: boolean;
   courses: Array<{ courseId: string }>; // you can also use Array<ObjectId> if you want to store ObjectId of courses
   comparePassword: (enteredPassword: string) => Promise<boolean>;
+  SignAcessToken: () => string;
+  SignRefreshToken: () => string;
 }
 
 const userSchema: Schema<IUser> = new mongoose.Schema(
@@ -46,11 +51,10 @@ const userSchema: Schema<IUser> = new mongoose.Schema(
     avatar: {
       public_id: {
         type: String,
-        required: true,
+        // required: true,
       },
       url: {
         type: String,
-        required: true,
       },
     },
     role: {
@@ -81,6 +85,20 @@ userSchema.pre<IUser>("save", async function (next) {
   next();
 });
 
+// sign access token
+userSchema.methods.SignAcessToken = function () {
+  return jwt.sign({ id: this._id }, process.env.ACESS_TOKEN || "", {
+    expiresIn: "",
+  });
+};
+
+//sign Refresh token
+userSchema.methods.SignRefreshToken = function () {
+  return jwt.sign({ id: this._id }, process.env.ACESS_TOKEN || "", {
+    expiresIn: "",
+  });
+};
+
 // compare user password
 userSchema.methods.comparePassword = async function (
   enteredPassword: string
@@ -90,5 +108,3 @@ userSchema.methods.comparePassword = async function (
 
 const User: Model<IUser> = mongoose.model("User", userSchema);
 export default User;
-
-//
