@@ -137,11 +137,12 @@ export const loginUser = CatchAsyncError(
       if (!isPsswordMatched) {
         return next(new ErrorHandler(400, "Invalid email or password"));
       }
-      const token = user.SignAcessToken();
-      res.status(200).json({
-        success: true,
-        token,
-      });
+      // const token = user.SignAcessToken();
+      // res.status(200).json({
+      //   success: true,
+      //   token,
+      // });
+      user.isVerified = true;
       sendToken(user, 200, res);
     } catch (error: any) {
       return next(new ErrorHandler(400, error.message));
