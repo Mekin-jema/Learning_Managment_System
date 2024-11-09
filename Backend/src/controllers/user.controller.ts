@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, response } from "express";
 import User, { IUser } from "../models/user.model";
 import ErrorHandler from "../utils/ErrorHandler";
 import { redis } from "../db/redisDatabase";
@@ -14,6 +14,7 @@ import {
   refreshTokenOptions,
   sendToken,
 } from "../utils/jwt";
+import { getUserById } from "../services/user.services";
 dotenv.config();
 interface IRegistirationBody {
   name: string;
@@ -230,3 +231,20 @@ export const updateAccessToken = CatchAsyncError(
     }
   }
 );
+
+// get user INfo
+export const getUserInfo = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const user = await getUserById(req.user?._id as string);
+      res.status(200).json({
+        success: true,
+        user,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(400, error.message));
+    }
+  }
+);
+
+//scocal auth
