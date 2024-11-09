@@ -21,7 +21,7 @@ export const isAuthenticated = CatchAsyncError(
       }
       const decoded = jwt.verify(
         access_token,
-        process.env.ACESS_TOKEN as string
+        process.env.ACCESS_TOKEN as string
       ) as JwtPayload;
       if (!decoded) {
         return next(new ErrorHandler(400, "access token is not valid "));
@@ -40,3 +40,18 @@ export const isAuthenticated = CatchAsyncError(
     }
   }
 );
+
+//validate user roles
+export const authorizeRoles = (...roles: string[]) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (!roles.includes(req.user?.role || "")) {
+      return next(
+        new ErrorHandler(
+          403,
+          `Role (${req.user?.role}) is not allowed to access this resource`
+        )
+      );
+    }
+    next();
+  };
+};

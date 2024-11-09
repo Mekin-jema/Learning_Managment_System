@@ -2,14 +2,18 @@ import { Request, Response, NextFunction } from "express";
 import User, { IUser } from "../models/user.model";
 import ErrorHandler from "../utils/ErrorHandler";
 import { redis } from "../db/redisDatabase";
-import jwt, { Secret } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import ejs from "ejs";
 import path from "path";
 import { CatchAsyncError } from "../middlewares/catchAsynchErrors";
 // Register a user => /api/v1/register
 import dotenv from "dotenv";
 import sendMail from "./sendMail";
-import { sendToken } from "../utils/jwt";
+import {
+  accessTokenOptions,
+  refreshTokenOptions,
+  sendToken,
+} from "../utils/jwt";
 dotenv.config();
 interface IRegistirationBody {
   name: string;
@@ -138,7 +142,7 @@ export const loginUser = CatchAsyncError(
       if (!isPsswordMatched) {
         return next(new ErrorHandler(400, "Invalid email or password"));
       }
-      // const token = user.SignAcessToken();
+      // const token = user.SignToken();
       // res.status(200).json({
       //   success: true,
       //   token,
@@ -168,6 +172,58 @@ export const logoutUser = CatchAsyncError(
       res.status(200).json({
         success: true,
         message: "User logged out successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(400, error.message));
+    }
+  }
+);
+
+//update access token
+export const updateAccessToken = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const refresh_Token = req.cookies.refresh_token as string;
+      if (!refresh_Token) {
+        return next(
+          new ErrorHandler(400, "Please login to access this resource")
+        );
+      }
+
+      const decoded = jwt.verify(
+        refresh_Token,
+        process.env.REFRESH_TOKEN as string
+      ) as JwtPayload;
+
+      if (!decoded) {
+        return next(new ErrorHandler(400, "Could not refresh token"));
+      }
+
+      const session = await redis.get(decoded.id as string);
+      if (!session) {
+        return next(new ErrorHandler(400, "Could not refresh token "));
+      }
+      const user = JSON.parse(session);
+      const accessToken = jwt.sign(
+        { id: user._id },
+        process.env.ACCESS_TOKEN as string,
+        {
+          expiresIn: "5m",
+        }
+      );
+      const refreshToken = jwt.sign(
+        { id: user._id },
+        process.env.REFRESH_TOKEN as string,
+        {
+          expiresIn: "7d",
+        }
+      );
+
+      res.cookie("access_token", accessToken, accessTokenOptions);
+      res.cookie("refresh_token", refreshToken, refreshTokenOptions);
+      res.status(200).json({
+        status: "success",
+        accessToken,
       });
     } catch (error: any) {
       return next(new ErrorHandler(400, error.message));

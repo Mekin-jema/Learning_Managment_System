@@ -18,7 +18,7 @@ export interface IUser extends Document {
   isVerified: boolean;
   courses: Array<{ courseId: string }>; // you can also use Array<ObjectId> if you want to store ObjectId of courses
   comparePassword: (enteredPassword: string) => Promise<boolean>;
-  SignAcessToken: () => string;
+  SignAccessToken: () => string;
   SignRefreshToken: () => string;
 }
 
@@ -86,13 +86,17 @@ userSchema.pre<IUser>("save", async function (next) {
 });
 
 // sign access token
-userSchema.methods.SignAcessToken = function () {
-  return jwt.sign({ id: this._id }, process.env.ACESS_TOKEN || "");
+userSchema.methods.SignAccessToken = function () {
+  return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN || "", {
+    expiresIn: "5m",
+  });
 };
 
 //sign Refresh token
 userSchema.methods.SignRefreshToken = function () {
-  return jwt.sign({ id: this._id }, process.env.ACESS_TOKEN || "");
+  return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN || "", {
+    expiresIn: "7d",
+  });
 };
 
 // compare user password
