@@ -15,6 +15,8 @@ import {
   sendToken,
 } from "../utils/jwt";
 import { getUserById } from "../services/user.services";
+import { v2 as cloudinary } from "cloudinary";
+
 dotenv.config();
 interface IRegistirationBody {
   name: string;
@@ -286,16 +288,16 @@ export const socialAuth = CatchAsyncError(
 interface IUpdateUser {
   name?: string;
   email?: string;
-  avatar?: {
-    public_id: string;
-    url: string;
-  };
+  // avatar?: {
+  //   public_id: string;
+  //   url: string;
+  // };
 }
 
 export const updateUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name, email, avatar } = req.body as IUpdateUser;
+      const { name, email } = req.body as IUpdateUser;
       const userId = req.user?._id as string;
       const user = await User.findById(userId);
       if (email && user) {
@@ -310,12 +312,12 @@ export const updateUserInfo = CatchAsyncError(
         user.name = name;
       }
       // i have added
-      if (avatar && user) {
-        user.avatar = {
-          public_id: avatar.public_id,
-          url: avatar.url,
-        };
-      }
+      // if (avatar && user) {
+      //   user.avatar = {
+      //     public_id: avatar.public_id,
+      //     url: avatar.url,
+      //   };
+      // }
       await user?.save();
       await redis.set(userId, JSON.stringify(user));
 
@@ -350,6 +352,7 @@ export const updatePassword = CatchAsyncError(
       const { oldPassword, newPassword } = req.body as IUpdatePassword;
 
       const user = await User.findById(req.user?._id).select("+password");
+      // incase of google auth  user does not have password
       if (!user?.password) {
         return next(new ErrorHandler(400, "User not does not have password"));
       }
@@ -365,6 +368,59 @@ export const updatePassword = CatchAsyncError(
       });
     } catch (error: any) {
       return next(new ErrorHandler(400, error.message));
+    }
+  }
+);
+
+// updagte avatar image or profile picture
+
+interface IUpdateProfile {
+  avatar: string;
+}
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+export const updateProfile = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { avatar } = req.body as IUpdateProfile;
+      const userId = req.user?._id as string;
+      const user = await User.findById(userId);
+
+      if (avatar && user) {
+        // If the user has an existing avatar, delete it before uploading a new one
+        if (user?.avatar?.public_id) {
+          const deleteResult = await cloudinary.uploader.destroy(
+            user.avatar.public_id
+          );
+          console.log("Delete result:", deleteResult);
+        }
+
+        // Upload the new avatar
+        const myCloud = await cloudinary.uploader.upload(avatar, {
+          folder: "avatars",
+          width: 150,
+          height: 150,
+          crop: "fill",
+        });
+        user.avatar = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        };
+      }
+
+      // Save the updated user and cache in Redis with expiration
+      await user?.save();
+      await redis.set(userId, JSON.stringify(user), "EX", 3600); // Cache expires in 1 hour
+
+      res.status(200).json({ success: true, user });
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      return next(new ErrorHandler(500, "Failed to update profile"));
     }
   }
 );
