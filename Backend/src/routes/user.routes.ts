@@ -5,6 +5,7 @@ import {
   loginUser,
   logoutUser,
   registrationUser,
+  socialAuth,
   updateAccessToken,
 } from "../controllers/user.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
@@ -17,5 +18,5 @@ router.post("/login", loginUser);
 router.post("/logout", isAuthenticated, authorizeRoles("admin"), logoutUser);
 router.get("/refeshToken", updateAccessToken);
 router.get("/getUserInfo", isAuthenticated, getUserInfo);
-
+router.post("/socialAuth", socialAuth);
 export default router;

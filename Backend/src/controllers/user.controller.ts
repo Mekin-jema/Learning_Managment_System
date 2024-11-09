@@ -248,3 +248,32 @@ export const getUserInfo = CatchAsyncError(
 );
 
 //scocal auth
+
+interface ISocailAuth {
+  email: string;
+  name: string;
+  avatar: string;
+}
+export const socialAuth = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { email, name, avatar } = req.body as ISocailAuth;
+      const user = await User.findOne({ email });
+      if (!user) {
+        const newUser = await User.create({
+          email,
+          // name:email.split("@")[0],
+          name,
+          avatar,
+          // isVerified:true
+        });
+
+        sendToken(newUser, 200, res);
+      } else {
+        sendToken(user, 200, res);
+      }
+    } catch (error: any) {
+      return next(new ErrorHandler(400, error.message));
+    }
+  }
+);
