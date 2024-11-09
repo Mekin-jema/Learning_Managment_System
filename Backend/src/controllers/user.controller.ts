@@ -20,7 +20,10 @@ interface IRegistirationBody {
   name: string;
   email: string;
   password: string;
-  avatar?: string;
+  avatar?: {
+    public_id: string;
+    url: string;
+  };
 }
 
 export const registrationUser = CatchAsyncError(
@@ -219,7 +222,7 @@ export const updateAccessToken = CatchAsyncError(
           expiresIn: "7d",
         }
       );
-
+      req.user = user;
       res.cookie("access_token", accessToken, accessTokenOptions);
       res.cookie("refresh_token", refreshToken, refreshTokenOptions);
       res.status(200).json({
@@ -272,6 +275,64 @@ export const socialAuth = CatchAsyncError(
       } else {
         sendToken(user, 200, res);
       }
+    } catch (error: any) {
+      return next(new ErrorHandler(400, error.message));
+    }
+  }
+);
+
+//update User Info
+
+interface IUpdateUser {
+  name?: string;
+  email?: string;
+  avatar?: {
+    public_id: string;
+    url: string;
+  };
+}
+
+export const updateUserInfo = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name, email, avatar } = req.body as IUpdateUser;
+      const userId = req.user?._id as string;
+      const user = await User.findById(userId);
+      if (email && user) {
+        const userExist = await User.findOne({ email });
+        if (userExist) {
+          return next(new ErrorHandler(400, "Email already exists"));
+        }
+        user.email = email;
+      }
+
+      if (name && user) {
+        user.name = name;
+      }
+      // i have added
+      if (avatar && user) {
+        user.avatar = {
+          public_id: avatar.public_id,
+          url: avatar.url,
+        };
+      }
+      await user?.save();
+      await redis.set(userId, JSON.stringify(user));
+
+      // const updateData = req.body as IUpdateUser;
+      // const user = await User.findByIdAndUpdate(
+      //   req.user?._id,
+      //   updateData,
+      //   {
+      //     new: true,
+      //     runValidators: true,
+      //     useFindAndModify: false,
+      //   }
+      // );
+      res.status(200).json({
+        success: true,
+        user,
+      });
     } catch (error: any) {
       return next(new ErrorHandler(400, error.message));
     }
