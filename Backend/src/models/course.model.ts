@@ -1,13 +1,13 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
+interface IComment extends Document {
+  user: object;
+  comment: string;
+  commentReplies?: IComment[];
+}
 
 interface IReview extends Document {
   user: object;
   rating: number;
-  comment: string;
-}
-
-interface IComment extends Document {
-  user: object;
   comment: string;
   commentReplies?: IComment[];
 }
@@ -25,13 +25,13 @@ interface ICourseData extends Document {
   videoSection: string;
   videoLength: number;
   videoPlayer: string;
-  links: ILink[];
+  link: ILink[];
   suggestion: string;
   questions: IComment[];
 }
 interface ICourse extends Document {
-  title: string;
-  description: string;
+  name: string;
+  description?: string;
   price: number;
   estimatedPrice?: number;
   thumbnail: object;
@@ -45,6 +45,11 @@ interface ICourse extends Document {
   rating?: number;
   purchased?: number;
 }
+const commentSchema: Schema<IComment> = new mongoose.Schema({
+  user: Object,
+  commentReplies: [Object],
+  comment: String,
+});
 
 const reviewSchema: Schema<IReview> = new mongoose.Schema({
   user: Object,
@@ -53,13 +58,9 @@ const reviewSchema: Schema<IReview> = new mongoose.Schema({
     default: 0,
   },
   comment: String,
+  // commentReplies: [commentSchema],
 });
 
-const commentSchema: Schema<IComment> = new mongoose.Schema({
-  user: Object,
-  comment: String,
-  commentReplies: [Object],
-});
 const linkSchema: Schema<ILink> = new mongoose.Schema({
   title: String,
   url: String,
@@ -72,13 +73,13 @@ const courseDataSchema: Schema<ICourseData> = new mongoose.Schema({
   videoSection: String,
   videoLength: Number,
   videoPlayer: String,
-  links: [linkSchema],
+  link: [linkSchema],
   suggestion: String,
   questions: [commentSchema],
 });
 
 const courseSchema: Schema<ICourse> = new mongoose.Schema({
-  title: {
+  name: {
     type: String,
     required: [true, "Please enter course title"],
   },

@@ -14,7 +14,7 @@ import {
   refreshTokenOptions,
   sendToken,
 } from "../utils/jwt";
-import { getUserById } from "../services/user.services";
+import { getUserById } from "../services/user.service";
 import { v2 as cloudinary } from "cloudinary";
 
 dotenv.config();

@@ -8,7 +8,8 @@ export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req.body;
-      const thumbnail = data.thumbnail;
+      const { thumbnail } = data;
+
       if (thumbnail) {
         const result = await cloudinary.uploader.upload(thumbnail, {
           folder: "courses",
@@ -18,9 +19,16 @@ export const uploadCourse = CatchAsyncError(
           url: result.secure_url,
         };
       }
-      createCourse(data, res, next);
+
+      const course = await createCourse(data);
+      res.status(201).json({
+        success: true,
+        message: "Course created successfully",
+        course,
+      });
     } catch (error: any) {
-      next(new ErrorHandler(error.message, 500));
+      console.error("Error in uploadCourse:", error);
+      return next(new ErrorHandler(error.message || "Server error", 500));
     }
   }
 );

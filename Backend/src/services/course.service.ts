@@ -1,13 +1,8 @@
-import { NextFunction, Response } from "express";
 import Course from "../models/course.model";
-import { CatchAsyncError } from "../middlewares/catchAsynchErrors";
+import ErrorHandler from "../utils/ErrorHandler";
 
-export const createCourse = CatchAsyncError(
-  async (next: NextFunction, res: Response, data: any) => {
-    const course = await Course.create(data);
-    res.status(201).json({
-      success: true,
-      course,
-    });
-  }
-);
+// This function should be asynchronous and return the created course document
+export const createCourse = async (data: any) => {
+  const course = await Course.create(data);
+  return course;
+};
