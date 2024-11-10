@@ -99,3 +99,22 @@ export const getSingleCourse = CatchAsyncError(
     }
   }
 );
+
+//get all course  without purchase
+export const getAllCourses = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const courses = await Course.find().select(
+        "-courseData.videoUrl -courseData.suggestion -courseData.questions -courseData.link"
+      );
+
+      res.status(200).json({
+        success: true,
+        courses,
+      });
+    } catch (error: any) {
+      console.error("Error in getAllCourses:", error);
+      return next(new ErrorHandler(error.message || "Server error", 500));
+    }
+  }
+);
