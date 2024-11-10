@@ -6,6 +6,7 @@ import {
   getAllCourses,
   getCoursesByUser,
   addQuestion,
+  addAnswer,
 } from "../controllers/course.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 
@@ -28,5 +29,6 @@ router.get("/get-course/:id", isAuthenticated, getSingleCourse);
 router.get("/get-course", isAuthenticated, getAllCourses);
 router.get("/get-user-courses/:id", isAuthenticated, getCoursesByUser);
 router.put("/add-question", isAuthenticated, addQuestion);
+router.put("/add-answer", isAuthenticated, addAnswer);
 
 export default router;

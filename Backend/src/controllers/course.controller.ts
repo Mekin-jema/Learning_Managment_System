@@ -6,7 +6,9 @@ import { createCourse } from "../services/course.service";
 import Course from "../models/course.model";
 import { redis } from "../db/redisDatabase";
 import mongoose from "mongoose";
-
+import ejs from "ejs";
+import path from "path";
+import sendEmail from "../controllers/sendMail";
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -209,7 +211,6 @@ export const addQuestion = CatchAsyncError(
         questionReplies: [],
       };
       //save the updated course
-      await course?.save();
 
       //add this question to course content
       courseContent.questions.push(newQuestion);
@@ -218,8 +219,89 @@ export const addQuestion = CatchAsyncError(
         message: "Question added successfully",
         course,
       });
+      await course?.save();
     } catch (error: any) {
       console.error("Error in addQuestion:", error);
+      return next(new ErrorHandler(error.message || "Server error", 500));
+    }
+  }
+);
+
+// add answer in course question
+
+interface IAddAnswerData {
+  answer: string;
+  courseId: string;
+  contentId: string;
+  questionId: string;
+}
+
+export const addAnswer = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = req.body as IAddAnswerData;
+      const { answer, courseId, contentId, questionId } = data;
+      if (!mongoose.Types.ObjectId.isValid(contentId)) {
+        return next(new ErrorHandler(400, "Content ID is not valid"));
+      }
+      const course = await Course.findById(courseId);
+
+      const courseContent = course?.courseData?.find((content: any) =>
+        content._id.equals(contentId)
+      );
+      if (!courseContent) {
+        return next(new ErrorHandler(404, "Content not found with this ID"));
+      }
+
+      const question = courseContent.questions.find((question: any) =>
+        question._id.equals(questionId)
+      );
+      if (!question) {
+        return next(new ErrorHandler(404, "Question not found with this ID"));
+      }
+
+      const newAnswer: any = {
+        answer,
+        user: req.user,
+      };
+
+      question?.questionReplies?.push(newAnswer); //added questionReplies to question wiht opetion mark
+      await course?.save();
+
+      //not that question  user  type must be user model type
+      if (req.user?._id === question.user._id) {
+        //if user is same who asked the question then do not send notification
+        //create notifiation  when the notifiction model is create it will doone
+      } else {
+        const data = {
+          name: question.user.name,
+          title: courseContent.title,
+        };
+        // whas the benefit of this html variable ?
+
+        const html: any = await ejs.renderFile(
+          path.join(__dirname, "../mails/question-reply.ejs"),
+          data
+        );
+        try {
+          await sendEmail({
+            email: question.user.email,
+            subject: "Question Reply",
+            template: "question-reply.ejs",
+            data,
+          });
+        } catch (error: any) {
+          console.error("Error in sending email:", error);
+          return next(new ErrorHandler(error.message || "Server error", 500));
+        }
+      }
+      res.status(200).json({
+        success: true,
+        message: "Answer added successfully",
+        course,
+      });
+    } catch (error: any) {
+      console.error("Error in addAnswer:", error);
       return next(new ErrorHandler(error.message || "Server error", 500));
     }
   }
