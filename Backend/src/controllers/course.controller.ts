@@ -3,6 +3,7 @@ import { CatchAsyncError } from "../middlewares/catchAsynchErrors";
 import ErrorHandler from "../utils/ErrorHandler";
 import { v2 as cloudinary } from "cloudinary";
 import { createCourse } from "../services/course.service";
+import Course from "../models/course.model";
 
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -28,6 +29,49 @@ export const uploadCourse = CatchAsyncError(
       });
     } catch (error: any) {
       console.error("Error in uploadCourse:", error);
+      return next(new ErrorHandler(error.message || "Server error", 500));
+    }
+  }
+);
+
+export const editCourse = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = req.body;
+      const { thumbnail } = data;
+
+      if (thumbnail && thumbnail.public_id) {
+        await cloudinary.uploader.destroy(thumbnail.public_id);
+        const myCloud = await cloudinary.uploader.upload(thumbnail, {
+          folder: "courses",
+        });
+        data.thumbnail = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        };
+      }
+
+      const courseId = req.params.id;
+      const updatedCourse = await Course.findByIdAndUpdate(
+        courseId,
+        {
+          $set: data,
+        },
+        {
+          new: true,
+        }
+      );
+      if (!updatedCourse) {
+        return next(new ErrorHandler(404, "Course not found with this ID"));
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Course updated successfully",
+        updatedCourse,
+      });
+    } catch (error: any) {
+      console.error("Error in editCourse:", error);
       return next(new ErrorHandler(error.message || "Server error", 500));
     }
   }

@@ -21,7 +21,7 @@ interface ICourseData extends Document {
   title: string;
   description: string;
   videoUrl: string;
-  videoThumbnail: object;
+  // videoThumbnail: object;
   videoSection: string;
   videoLength: number;
   videoPlayer: string;
@@ -69,7 +69,7 @@ const courseDataSchema: Schema<ICourseData> = new mongoose.Schema({
   title: String,
   description: String,
   videoUrl: String,
-  videoThumbnail: Object,
+  // videoThumbnail: Object,
   videoSection: String,
   videoLength: Number,
   videoPlayer: String,
@@ -97,11 +97,11 @@ const courseSchema: Schema<ICourse> = new mongoose.Schema({
   },
   thumbnail: {
     public_id: {
-      required: [true, "Please enter course thumbnail public_id"],
+      // required: [true, "Please enter course thumbnail public_id"],
       type: String,
     },
     url: {
-      required: [true, "Please enter course thumbnail url"],
+      // required: [true, "Please enter course thumbnail url"],
       type: String,
     },
     // required: [true, "Please enter course thumbnail"],
