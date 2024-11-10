@@ -5,6 +5,7 @@ import { v2 as cloudinary } from "cloudinary";
 import { createCourse } from "../services/course.service";
 import Course from "../models/course.model";
 import { redis } from "../db/redisDatabase";
+import mongoose from "mongoose";
 
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -81,7 +82,7 @@ export const editCourse = CatchAsyncError(
   }
 );
 
-//get sigle course without purchase
+//get single course without purchase
 export const getSingleCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -114,7 +115,7 @@ export const getSingleCourse = CatchAsyncError(
   }
 );
 
-//get all course  without purchase
+//get all courses without purchase
 export const getAllCourses = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -131,14 +132,94 @@ export const getAllCourses = CatchAsyncError(
       );
 
       await redis.set("allCourses", JSON.stringify(courses));
-      const response = await redis.get("allCourses");
+      // const response = await redis.get("allCourses");
 
       res.status(200).json({
         success: true,
-        courses: response ? JSON.parse(response) : [],
+        courses,
       });
     } catch (error: any) {
       console.error("Error in getAllCourses:", error);
+      return next(new ErrorHandler(error.message || "Server error", 500));
+    }
+  }
+);
+
+//  get course content with valid user
+export const getCoursesByUser = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userCourseList = req.user?.courses;
+      const courseId = req.params.id;
+      const courseExist = userCourseList?.find(
+        (course) => course.courseId === courseId
+      );
+
+      if (courseExist) {
+        const course = await Course.findById(courseId);
+        if (!course) {
+          return next(new ErrorHandler(404, "Course not found with this ID"));
+        }
+        res.status(200).json({
+          success: true,
+          course,
+        });
+      } else {
+        return next(
+          new ErrorHandler(403, "You do not have access to this course")
+        );
+      }
+    } catch (error: any) {
+      console.error("Error in getCourseByUser:", error);
+      return next(new ErrorHandler(error.message || "Server error", 500));
+    }
+  }
+);
+
+// add question in course
+interface IAdddQuestionData {
+  question: string;
+  courseId: string;
+  contentId: string;
+}
+
+export const addQuestion = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = req.body as IAdddQuestionData;
+      // const data: IAdddQuestionData = req.body; // this is also correct they are same way of writing type
+
+      const { question, courseId, contentId } = data;
+      if (!mongoose.Types.ObjectId.isValid(contentId)) {
+        return next(new ErrorHandler(400, "Content ID is not valid"));
+      }
+      const course = await Course.findById(courseId);
+
+      const courseContent = course?.courseData?.find(
+        // (content: any) => content._id === contentId
+        (content: any) => content._id.equals(contentId)
+      );
+      if (!courseContent) {
+        return next(new ErrorHandler(404, "Content not found with this ID"));
+      }
+      //create a new question object
+      const newQuestion: any = {
+        question,
+        user: req.user,
+        questionReplies: [],
+      };
+      //save the updated course
+      await course?.save();
+
+      //add this question to course content
+      courseContent.questions.push(newQuestion);
+      res.status(200).json({
+        success: true,
+        message: "Question added successfully",
+        course,
+      });
+    } catch (error: any) {
+      console.error("Error in addQuestion:", error);
       return next(new ErrorHandler(error.message || "Server error", 500));
     }
   }

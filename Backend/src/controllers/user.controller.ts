@@ -26,12 +26,13 @@ interface IRegistirationBody {
     public_id: string;
     url: string;
   };
+  courses?: string[];
 }
 
 export const registrationUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password, courses } = req.body;
       const userExist = await User.findOne({ email });
 
       if (userExist) {
@@ -41,6 +42,7 @@ export const registrationUser = CatchAsyncError(
         name,
         email,
         password,
+        courses,
       };
       // User.create(user);
       const activationToken = createActivationToken(user);
@@ -107,7 +109,7 @@ export const activateUser = CatchAsyncError(
       if (newUser.activationCode !== activation_code) {
         return next(new ErrorHandler(400, "Invalide activatin code "));
       }
-      const { name, email, password } = newUser.user;
+      const { name, email, password, courses } = newUser.user;
       const existUser = await User.findOne({ email });
       if (existUser) {
         return next(new ErrorHandler(400, "Email already Exist "));
@@ -116,8 +118,9 @@ export const activateUser = CatchAsyncError(
         name,
         email,
         password,
+        courses,
       });
-      res.status(201).json({ sucess: true });
+      res.status(201).json({ sucess: true, user });
     } catch (error: any) {
       return next(new ErrorHandler(400, error.message));
     }

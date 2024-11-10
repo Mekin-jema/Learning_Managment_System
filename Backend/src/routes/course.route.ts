@@ -4,6 +4,8 @@ import {
   getSingleCourse,
   uploadCourse,
   getAllCourses,
+  getCoursesByUser,
+  addQuestion,
 } from "../controllers/course.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 
@@ -14,24 +16,17 @@ router.post(
   isAuthenticated,
   authorizeRoles("admin"),
   uploadCourse
-); // /api/v1/create-course
+);
 router.put(
   "/edit-course/:id",
   isAuthenticated,
   authorizeRoles("admin"),
   editCourse
-); // /api/v1/create-course
-router.get(
-  "/get-course/:id",
-  isAuthenticated,
-  // authorizeRoles("admin"),
-  getSingleCourse
 );
-router.get(
-  "/get-course",
-  isAuthenticated,
-  // authorizeRoles("admin"),
-  getAllCourses
-);
+// ...existing code...
+router.get("/get-course/:id", isAuthenticated, getSingleCourse);
+router.get("/get-course", isAuthenticated, getAllCourses);
+router.get("/get-user-courses/:id", isAuthenticated, getCoursesByUser);
+router.put("/add-question", isAuthenticated, addQuestion);
 
 export default router;
