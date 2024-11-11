@@ -114,7 +114,7 @@ export const activateUser = CatchAsyncError(
       if (existUser) {
         return next(new ErrorHandler(400, "Email already Exist "));
       }
-      const user = await User.create({
+      const user = await User.insertMany({
         name,
         email,
         password,
@@ -291,6 +291,8 @@ export const socialAuth = CatchAsyncError(
 interface IUpdateUser {
   name?: string;
   email?: string;
+  // co: {string}
+
   // avatar?: {
   //   public_id: string;
   //   url: string;
@@ -314,6 +316,7 @@ export const updateUserInfo = CatchAsyncError(
       if (name && user) {
         user.name = name;
       }
+
       // i have added
       // if (avatar && user) {
       //   user.avatar = {

@@ -14,7 +14,7 @@ export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const data = req.body;
-      console.log(data);
+      // console.log(data);
       const { thumbnail } = data;
 
       if (thumbnail) {
@@ -45,6 +45,14 @@ export const uploadCourse = CatchAsyncError(
 export const editCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const courseId = req.params.id;
+      if (!mongoose.Types.ObjectId.isValid(courseId)) {
+        return next(new ErrorHandler(400, "Content ID is not valid"));
+      }
+      const courseExist = await Course.findById(courseId);
+      if (!courseExist) {
+        return next(new ErrorHandler(404, "Course is not found"));
+      }
       const data = req.body;
       const { thumbnail } = data;
 
@@ -59,7 +67,6 @@ export const editCourse = CatchAsyncError(
         };
       }
 
-      const courseId = req.params.id;
       const updatedCourse = await Course.findByIdAndUpdate(
         courseId,
         {

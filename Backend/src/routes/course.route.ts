@@ -8,6 +8,7 @@ import {
   addQuestion,
   addAnswer,
   addReview,
+  addReplyToReview,
 } from "../controllers/course.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 
@@ -36,7 +37,7 @@ router.post(
   "/add-reply-review",
   isAuthenticated,
   authorizeRoles("admin"),
-  addReview
+  addReplyToReview
 );
 
 export default router;
