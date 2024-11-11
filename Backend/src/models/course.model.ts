@@ -43,7 +43,7 @@ interface ICourse extends Document {
   preRequesites: { title: string }[];
   reviews: IReview[];
   courseData: ICourseData[];
-  rating?: number;
+  ratings?: number;
   purchased?: number;
 }
 const commentSchema: Schema<IComment> = new mongoose.Schema({
@@ -131,7 +131,7 @@ const courseSchema: Schema<ICourse> = new mongoose.Schema({
   ],
   reviews: [reviewSchema],
   courseData: [courseDataSchema],
-  rating: {
+  ratings: {
     type: Number,
     default: 0,
   },
