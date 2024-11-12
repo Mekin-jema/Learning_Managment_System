@@ -9,6 +9,7 @@ import courseRoutes from "./routes/course.route";
 import orderRoutes from "./routes/order.route";
 import notficationRoutes from "./routes/notification";
 import analyticRoutes from "./routes/analytics.route";
+import layoutRoutes from "./routes/layout.route";
 dotenv.config();
 
 const app = express();
@@ -34,7 +35,8 @@ app.use(
   courseRoutes,
   orderRoutes,
   notficationRoutes,
-  analyticRoutes
+  analyticRoutes,
+  layoutRoutes
 );
 
 app.get("/", (req, res, next) => {
