@@ -5,7 +5,7 @@ import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 const router = express.Router();
 
 router.post("/create-order", isAuthenticated, createOrder);
-router.post(
+router.get(
   "/get-all-orders",
   isAuthenticated,
   authorizeRoles("admin"),

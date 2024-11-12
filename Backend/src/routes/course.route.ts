@@ -45,7 +45,7 @@ router.post(
   authorizeRoles("admin"),
   addReplyToReview
 );
-router.post(
+router.get(
   "/get-all-courses",
   isAuthenticated,
   authorizeRoles("admin"),

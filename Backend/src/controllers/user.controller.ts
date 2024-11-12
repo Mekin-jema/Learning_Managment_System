@@ -440,3 +440,20 @@ export const getAllUsers = CatchAsyncError(
     }
   }
 );
+
+//update user role --only for admin
+
+export const updateUserRole = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id, role } = req.body;
+      await User.findByIdAndUpdate(id, { role }, { new: true });
+      res.status(200).json({
+        success: true,
+        message: "User role updated successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(400, error.message));
+    }
+  }
+);
