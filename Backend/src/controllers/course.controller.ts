@@ -9,6 +9,7 @@ import mongoose from "mongoose";
 import ejs from "ejs";
 import path from "path";
 import sendEmail from "../controllers/sendMail";
+import Notifiation from "../models/notification.model";
 
 export const uploadCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -222,6 +223,11 @@ export const addQuestion = CatchAsyncError(
 
       //add this question to course content
       courseContent.questions.push(newQuestion);
+      await Notifiation.create({
+        user: req.user?._id,
+        title: "New Question received",
+        message: `${req.user?.name} has asked a question on ${courseContent.title}`,
+      });
       res.status(200).json({
         success: true,
         message: "Question added successfully",
@@ -280,6 +286,11 @@ export const addAnswer = CatchAsyncError(
       if (req.user?._id === question.user._id) {
         //if user is same who asked the question then do not send notification
         //create notifiation  when the notifiction model is create it will doone
+        await Notifiation.create({
+          user: req.user?._id,
+          title: "Question Answered",
+          message: `Your question has been answered on ${courseContent.title}`,
+        });
       } else {
         const data = {
           name: question.user.name,
@@ -287,10 +298,10 @@ export const addAnswer = CatchAsyncError(
         };
         // whas the benefit of this html variable ?
 
-        const html: any = await ejs.renderFile(
-          path.join(__dirname, "../mails/question-reply.ejs"),
-          data
-        );
+        // const html: any = await ejs.renderFile(
+        //   path.join(__dirname, "../mails/question-reply.ejs"),
+        //   data
+        // );
         try {
           await sendEmail({
             email: question.user.email,

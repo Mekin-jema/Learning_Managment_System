@@ -14,7 +14,7 @@ router.get(
   authorizeRoles("admin"),
   getNotification
 );
-router.get(
+router.put(
   "/read-notification/:id",
   isAuthenticated,
   authorizeRoles("admin"),
