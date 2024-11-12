@@ -16,6 +16,7 @@ import {
 } from "../utils/jwt";
 import { getUserById } from "../services/user.service";
 import { v2 as cloudinary } from "cloudinary";
+import { newOrder } from "../services/order.service";
 
 dotenv.config();
 interface IRegistirationBody {
@@ -49,10 +50,10 @@ export const registrationUser = CatchAsyncError(
       const activationCode = activationToken.activationCode;
 
       const data = { user: { name: user.name }, activationCode };
-      const html = await ejs.renderFile(
-        path.join(__dirname, "../mails/activation-mail.ejs"),
-        data
-      );
+      // const html = await ejs.renderFile(
+      //   path.join(__dirname, "../mails/activation-mail.ejs"),
+      //   data
+      // );
       try {
         await sendMail({
           email: user.email,
@@ -109,12 +110,13 @@ export const activateUser = CatchAsyncError(
       if (newUser.activationCode !== activation_code) {
         return next(new ErrorHandler(400, "Invalide activatin code "));
       }
+
       const { name, email, password, courses } = newUser.user;
       const existUser = await User.findOne({ email });
       if (existUser) {
         return next(new ErrorHandler(400, "Email already Exist "));
       }
-      const user = await User.insertMany({
+      const user = await User.create({
         name,
         email,
         password,
@@ -139,9 +141,9 @@ export const loginUser = CatchAsyncError(
     try {
       const { email, password } = req.body as ILoginRequest;
 
-      if (!email || !password) {
-        return next(new ErrorHandler(400, "Please enter email and password"));
-      }
+      // if (!email || !password) {
+      //   return next(new ErrorHandler(400, "Please enter email and password"));
+      // }
       const user = await User.findOne({ email }).select("-password");
 
       if (!user) {
@@ -151,11 +153,7 @@ export const loginUser = CatchAsyncError(
       if (!isPsswordMatched) {
         return next(new ErrorHandler(400, "Invalid email or password"));
       }
-      // const token = user.SignToken();
-      // res.status(200).json({
-      //   success: true,
-      //   token,
-      // });
+
       user.isVerified = true;
       sendToken(user, 200, res);
     } catch (error: any) {

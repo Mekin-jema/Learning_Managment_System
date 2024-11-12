@@ -6,6 +6,7 @@ import connectDB from "./db/mongoDatabase"; //.ts extension is not required
 import { ErrorMiddleware } from "./middlewares/error";
 import userRoutes from "./routes/user.routes";
 import courseRoutes from "./routes/course.route";
+import orderRoutes from "./routes/order.route";
 dotenv.config();
 
 const app = express();
@@ -25,8 +26,8 @@ app.use(
 //
 
 //
-app.use("/api/v1", userRoutes);
-app.use("/api/v1", courseRoutes);
+app.use("/api/v1", userRoutes, courseRoutes, orderRoutes);
+
 app.get("/", (req, res, next) => {
   res.send("Hello World");
 });

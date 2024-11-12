@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Order Confirmation</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Basic reset */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", sans-serif;
+        background-color: #f0f4f8;
+        color: #333;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .container {
+        background: linear-gradient(135deg, #e0e7ff, #f3f4f6);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+      }
+
+      h1 {
+        color: #1a73e8;
+        font-size: 1.8rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+      }
+
+      .order-detail {
+        display: flex;
+        justify-content: space-between;
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 1rem;
+      }
+
+      .order-detail span {
+        font-weight: bold;
+      }
+
+      .order-price {
+        font-size: 1.5rem;
+        color: #28a745;
+        font-weight: 600;
+        margin: 1.5rem 0;
+      }
+
+      .order-header {
+        background-color: #1a73e8;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        display: inline-block;
+      }
+
+      .action-buttons {
+        margin-top: 1.5rem;
+        display: flex;
+        justify-content: space-around;
+      }
+
+      .button {
+        padding: 0.6rem 1.2rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #fff;
+        background-color: #1a73e8;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        text-decoration: none;
+      }
+
+      .button:hover {
+        background-color: #1666c1;
+      }
+
+      .button-secondary {
+        background-color: #28a745;
+      }
+
+      .button-secondary:hover {
+        background-color: #218838;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="order-header">Order Confirmation</div>
+
+      <h1>Thank you for your purchase!</h1>
+
+      <div class="order-detail"><span>Order #:</span> <%= order._id %></div>
+      <div class="order-detail"><span>Order Date:</span> <%= order.date %></div>
+      <div class="order-detail"><span>Order Name:</span> <%= order.name %></div>
+
+      <div class="order-price">£<%= order.price %></div>
+
+      <div class="action-buttons">
+        <a href="/order-details/<%= order._id %>" class="button">View Order</a>
+        <a href="/" class="button button-secondary">Home</a>
+      </div>
+    </div>
+  </body>
+</html>
