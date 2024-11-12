@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middlewares/catchAsynchErrors";
 import ErrorHandler from "../utils/ErrorHandler";
-import mongoose from "mongoose";
+import mongoose, { Types, Document } from "mongoose";
 import path from "path";
 import ejs from "ejs";
 import sendMail from "./sendMail";
@@ -29,8 +29,10 @@ export const createOrder = CatchAsyncError(
         _id: mongoose.Types.ObjectId;
         name: string;
         price: number;
+        purchased: number;
+        save: () => Promise<void>;
       };
-
+      console.log(course);
       if (!course) {
         return next(new ErrorHandler(404, "Course not found"));
       }
@@ -51,7 +53,6 @@ export const createOrder = CatchAsyncError(
 
       // Add course ID to user's courses and save
       user.courses.push({ courseId: course._id.toString() });
-      await user.save();
 
       // Prepare mail data
       const mailData = {
@@ -79,18 +80,26 @@ export const createOrder = CatchAsyncError(
         return next(new ErrorHandler(500, error.message));
       }
 
+      const data: any = {
+        userId: user._id,
+        payment_info,
+        courseId,
+      };
       // Create notification
       const notification = await Notifiation.create({
         userId: user._id,
         title: "New Order",
         message: `You have a new order: ${course.name}`,
       });
+      // if (course.purchased + 1) {
+      //   course.purchased += 1;
+      // }
 
+      course.purchased ? (course.purchased += 1) : course.purchased;
       // Respond with success
-      res.status(201).json({
-        success: true,
-        order: course,
-      });
+      newOrder(data, res, next);
+      await course.save();
+      await user.save();
     } catch (error: any) {
       return next(new ErrorHandler(500, error.message));
     }
