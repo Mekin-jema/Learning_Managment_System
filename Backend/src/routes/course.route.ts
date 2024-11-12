@@ -9,6 +9,7 @@ import {
   addAnswer,
   addReview,
   addReplyToReview,
+  getAllCourse,
 } from "../controllers/course.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 
@@ -32,12 +33,23 @@ router.get("/get-course", isAuthenticated, getAllCourses);
 router.get("/get-user-courses/:id", isAuthenticated, getCoursesByUser);
 router.put("/add-question", isAuthenticated, addQuestion);
 router.put("/add-answer", isAuthenticated, addAnswer);
-router.post("/add-review/:id", isAuthenticated, addReview);
+router.post(
+  "/add-review/:id",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  addReview
+);
 router.post(
   "/add-reply-review",
   isAuthenticated,
   authorizeRoles("admin"),
   addReplyToReview
+);
+router.post(
+  "/get-all-courses",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  getAllCourse
 );
 
 export default router;

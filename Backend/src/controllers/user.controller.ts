@@ -14,7 +14,7 @@ import {
   refreshTokenOptions,
   sendToken,
 } from "../utils/jwt";
-import { getUserById } from "../services/user.service";
+import { getAllUsersService, getUserById } from "../services/user.service";
 import { v2 as cloudinary } from "cloudinary";
 import { newOrder } from "../services/order.service";
 
@@ -425,6 +425,18 @@ export const updateProfile = CatchAsyncError(
     } catch (error: any) {
       console.error("Error updating profile:", error);
       return next(new ErrorHandler(500, "Failed to update profile"));
+    }
+  }
+);
+
+// get all users ---only admin
+
+export const getAllUsers = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllUsersService(res);
+    } catch (error: any) {
+      return next(new ErrorHandler(400, error.message));
     }
   }
 );

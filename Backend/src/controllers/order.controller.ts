@@ -9,7 +9,7 @@ import Order from "../models/order.model";
 import Notifiation from "../models/notification.model";
 import Course from "../models/course.model";
 import User, { IUser } from "../models/user.model";
-import { newOrder } from "../services/order.service";
+import { getAllOrdersService, newOrder } from "../services/order.service";
 
 //create order
 
@@ -96,10 +96,21 @@ export const createOrder = CatchAsyncError(
       // }
 
       course.purchased ? (course.purchased += 1) : course.purchased;
-      // Respond with success
+      // Respond with successs
       newOrder(data, res, next);
       await course.save();
       await user.save();
+    } catch (error: any) {
+      return next(new ErrorHandler(500, error.message));
+    }
+  }
+);
+
+//get All orders
+export const getAllOrders = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      getAllOrdersService(res);
     } catch (error: any) {
       return next(new ErrorHandler(500, error.message));
     }

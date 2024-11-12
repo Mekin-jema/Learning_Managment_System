@@ -5,6 +5,7 @@ import {
   getNotification,
   readNotification,
 } from "../controllers/notification.controller";
+import { getAllOrders } from "../controllers/order.controller";
 
 const router = express.Router();
 
