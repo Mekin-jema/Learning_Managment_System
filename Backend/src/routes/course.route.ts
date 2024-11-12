@@ -13,6 +13,7 @@ import {
   deleteCourse,
 } from "../controllers/course.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
+import { getCouresAnalytics } from "../controllers/analytics.controller";
 
 const router = express.Router();
 
