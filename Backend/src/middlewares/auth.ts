@@ -12,7 +12,7 @@ export const isAuthenticated = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const access_token = req.cookies.access_token;
-      console.log(access_token);
+      // console.log(access_token);
 
       if (!access_token) {
         return next(
@@ -30,7 +30,9 @@ export const isAuthenticated = CatchAsyncError(
       const user = await redis.get(decoded.id);
 
       if (!user) {
-        return next(new ErrorHandler(400, "User is not Found"));
+        return next(
+          new ErrorHandler(400, "Please login to access this resource")
+        );
       }
       // declare the  global file to remove  the error
       req.user = JSON.parse(user);

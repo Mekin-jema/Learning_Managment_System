@@ -88,7 +88,7 @@ export const editLayout = CatchAsyncError(
           title,
           subtitle,
         };
-        await Layout.findByIdAndUpdate(bannerData.id, { banner });
+        await Layout.findByIdAndUpdate(bannerData._id, { banner });
       }
       if (type === "FAQ") {
         const { faq } = req.body;
@@ -109,7 +109,7 @@ export const editLayout = CatchAsyncError(
       if (type === "Categories") {
         const { Categories } = req.body;
         const Cat = await Layout.findOne({ type: "Categories" });
-        const categores = await Promise.all(
+        const Cate = await Promise.all(
           Categories?.map(async (item: any) => {
             return {
               title: item.title,
@@ -118,13 +118,29 @@ export const editLayout = CatchAsyncError(
         );
         await Layout.findByIdAndUpdate(Cat?._id, {
           type: "Categories",
-          categories: categores,
+          categories: Cate,
         });
       }
 
       res.status(200).json({
         success: true,
         message: `${type} layout is updated successfully`,
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(500, error.message));
+    }
+  }
+);
+
+//get layout by type
+export const getLayoutByType = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const type = req.body.type;
+      const layout = await Layout.findOne({ type });
+      res.status(201).json({
+        success: true,
+        layout,
       });
     } catch (error: any) {
       return next(new ErrorHandler(500, error.message));
