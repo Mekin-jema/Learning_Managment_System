@@ -39,7 +39,7 @@ const Header = ({ activeItem, open, setOpen }: Props) => {
             : "w-full border-b dark:border-[#ffffff1c] h-[80px] z-[80 dark:shadow"
         }`}
       >
-        <div className="w-[95%] sm:w-[92%] m-auto py-2 h-full">
+        <div className="w-[95%] md:w-[92%] m-auto py-2 h-full">
           <div className="w-full h-[80px] flex items-center justify-between p-3">
             <div>
               <Link
@@ -53,7 +53,7 @@ const Header = ({ activeItem, open, setOpen }: Props) => {
               <NavItem activeItem={activeItem} isMobile={false} />
               <ThemeSwitcher />
               {/* Only for mobile  */}
-              <div className="sm:hidden">
+              <div className="md:hidden">
                 <HiOutlineMenuAlt3
                   size={25}
                   className="cursor-pointer dark:text-white text-black "
@@ -62,7 +62,7 @@ const Header = ({ activeItem, open, setOpen }: Props) => {
               </div>
               <HiOutlineUserCircle
                 size={25}
-                className="cursor-pointer dark:text-white text-black "
+                className="cursor-pointer dark:text-white text-black  hidden md:flex"
                 onClick={() => setOpen(true)}
               />
             </div>
@@ -75,11 +75,11 @@ const Header = ({ activeItem, open, setOpen }: Props) => {
             onClick={handleClose}
             id="screen"
           >
-            <div className="w-[70%] fixed z-[999999999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0">
+            <div className="w-[70%] fixed z-[99999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0 flex flex-col items-center ">
               <NavItem activeItem={activeItem} isMobile={true} />
               <HiOutlineUserCircle
                 size={25}
-                className="cursor-pointer dark:text-white text-black hidden"
+                className="cursor-pointer dark:text-white text-black  "
                 onClick={() => setOpen(true)}
               />
 
