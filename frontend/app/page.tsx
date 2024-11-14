@@ -1,12 +1,22 @@
 "use client";
-import React from "react";
+import React, { FC, useState } from "react";
 import Heading from "./utils/Heading";
+import Header from "./components/Header";
 
-const Page = () => {
+interface Props {}
+
+const Page: FC<Props> = (props) => {
+  const [open, setOpen] = useState(false);
+  const [activeItem, setActiveItem] = useState(0);
+
   return (
     <div>
-      <Heading title="Home" description="Home page" keywords="Home, Page" />
-      <p className="bg-white text-black">Hello wrold</p>
+      <Heading
+        title="Nextjs LMS"
+        description="See Freely with ICT SMC simplified"
+        keywords="ICT, SMC, simplified, see, freely, tea"
+      />
+      <Header open={open} setOpen={setOpen} activeItem={activeItem} />
     </div>
   );
 };
