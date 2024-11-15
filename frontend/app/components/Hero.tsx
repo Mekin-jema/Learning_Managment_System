@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion"; // for animations
@@ -32,11 +33,16 @@ const Hero = ({
       </div>
 
       {/* Text Content Section */}
-      <div className="lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left mt-[15px] px-6">
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1 }}
+        className="lg:w-1/2 flex flex-col items-center lg:items-start text-center lg:text-left mt-[15px] px-6"
+      >
         <h2 className="dark:text-white text-gray-800 text-3xl lg:text-5xl font-semibold font-Josefin py-4 lg:leading-tight">
           {tagline}
         </h2>
-        <p className="dark:text-gray-300 text-lg lg:text-xl mb-6 max-w-lg">
+        <p className="dark:text-gray-300  text-gray-800 text-lg lg:text-xl mb-6 max-w-lg">
           {description}
         </p>
 
@@ -44,13 +50,13 @@ const Hero = ({
         <button className="mt-4 px-8 py-3 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition">
           Explore Courses
         </button>
-      </div>
+      </motion.div>
 
       {/* Animated Background/Overlay */}
       <motion.div
         className="absolute inset-0 bg-gradient-to-r from-transparent to-blue-200 opacity-30 dark:opacity-20 z-0"
         animate={{ opacity: [0.2, 0.4, 0.2] }}
-        transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
+        transition={{ repeat: Infinity, duration: 100, ease: "easeInOut" }}
       ></motion.div>
     </div>
   );

@@ -9,6 +9,7 @@ interface Props {}
 const Page: FC<Props> = (props) => {
   const [open, setOpen] = useState(false);
   const [activeItem, setActiveItem] = useState(0);
+  const [route, setRoute] = useState("Sign-up");
 
   return (
     <div>
@@ -17,7 +18,13 @@ const Page: FC<Props> = (props) => {
         description="See Freely with ICT SMC simplified"
         keywords="ICT, SMC, simplified, see, freely, tea"
       />
-      <Header open={open} setOpen={setOpen} activeItem={activeItem} />
+      <Header
+        setRoute={setRoute}
+        route={route}
+        open={open}
+        setOpen={setOpen}
+        activeItem={activeItem}
+      />
       <Hero />
     </div>
   );

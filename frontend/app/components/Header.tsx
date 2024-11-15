@@ -1,29 +1,42 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import NavItem from "../utils/NavItem";
 import ThemeSwitcher from "../utils/ThemeSwitcher";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
+import CustomModal from "../utils/CustomModal";
+import SignUp from "./Signup";
+import Login from "./Login";
 
 type Props = {
   open: boolean;
   setOpen: (open: boolean) => void;
   activeItem: number;
+  route: string;
+  setRoute: (route: string) => void;
 };
 
-const Header = ({ activeItem, open, setOpen }: Props) => {
+const Header = ({ activeItem, open, route, setRoute, setOpen }: Props) => {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
 
-  if (typeof window !== "undefined") {
-    window.addEventListener("scroll", () => {
-      if (window.scrollY > 85) {
-        setActive(true);
-      } else {
-        setActive(false);
-      }
-    });
-  }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleScroll = () => {
+        if (window.scrollY > 85) {
+          setActive(true);
+        } else {
+          setActive(false);
+        }
+      };
+
+      window.addEventListener("scroll", handleScroll);
+
+      return () => {
+        window.removeEventListener("scroll", handleScroll);
+      };
+    }
+  }, []);
 
   const handleClose = (e: any) => {
     if (e.target.id === "screen") {
@@ -92,6 +105,32 @@ const Header = ({ activeItem, open, setOpen }: Props) => {
           </div>
         )}
       </div>
+      {route === "Login" && (
+        <>
+          {open && (
+            <CustomModal
+              activeItem={activeItem}
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+              Component={Login}
+            />
+          )}
+        </>
+      )}
+      {route === "Sign-up" && (
+        <>
+          {open && (
+            <CustomModal
+              activeItem={activeItem}
+              open={open}
+              setOpen={setOpen}
+              setRoute={setRoute}
+              Component={SignUp}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };
