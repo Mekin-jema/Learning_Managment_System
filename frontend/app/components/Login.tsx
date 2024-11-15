@@ -9,6 +9,7 @@ import {
   AiFillGithub,
 } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
+import { motion } from "framer-motion";
 type Props = {
   setRoute: (route: string) => void;
 };
@@ -33,7 +34,12 @@ const Login = ({ setRoute }: Props) => {
   const { errors, touched, values, handleChange, handleBlur, handleSubmit } =
     formik;
   return (
-    <div className="w-full ">
+    <motion.div
+      className="w-full"
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 1 }}
+    >
       <h2 className={`${styles.title}`}>Login with E-Learning</h2>
       <form onSubmit={handleSubmit} className="p-5  ">
         <label className={`${styles.label}`} htmlFor="email">
@@ -44,7 +50,7 @@ const Login = ({ setRoute }: Props) => {
           name=""
           value={values.email}
           id="email"
-          placeholder="Enter your email"
+          placeholder="mekinjemal999@gmail.com"
           onChange={handleChange}
           className={`${
             errors.password && touched.email && "border-red-500 "
@@ -63,7 +69,7 @@ const Login = ({ setRoute }: Props) => {
               name="password"
               value={values.password}
               id="password"
-              placeholder="password"
+              placeholder="qwerty1234"
               onChange={handleChange}
               className={`${
                 errors.password && touched.password && "border-red-500 "
@@ -99,7 +105,7 @@ const Login = ({ setRoute }: Props) => {
           <AiFillGithub className="cursor-pointer ml-2" />
         </div>
         <br />
-        <h5 className=" text-cener pt-4 font-Poppins text-[14px]">
+        <h5 className=" flex justify-center  pt-4 font-Poppins text-[14px] ">
           Not have any account
           <span
             className="text-[#2190ff] pl-1 cursor-pointer "
@@ -110,7 +116,7 @@ const Login = ({ setRoute }: Props) => {
         </h5>
       </form>
       <br />
-    </div>
+    </motion.div>
   );
 };
 

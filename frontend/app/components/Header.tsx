@@ -7,16 +7,25 @@ import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 import CustomModal from "../utils/CustomModal";
 import SignUp from "./Signup";
 import Login from "./Login";
+import { motion } from "framer-motion";
 
 type Props = {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  activeItem: number;
   route: string;
+  open: boolean;
+  activeItem: number;
+  setOpen: (open: boolean) => void;
   setRoute: (route: string) => void;
+  setActiveItem: (activeItem: number) => void;
 };
 
-const Header = ({ activeItem, open, route, setRoute, setOpen }: Props) => {
+const Header = ({
+  route,
+  open,
+  activeItem,
+  setRoute,
+  setOpen,
+  setActiveItem,
+}: Props) => {
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
 
@@ -52,35 +61,39 @@ const Header = ({ activeItem, open, route, setRoute, setOpen }: Props) => {
             : "w-full border-b dark:border-[#ffffff1c] h-[80px] z-[80 dark:shadow"
         }`}
       >
-        <div className="w-[95%] md:w-[92%] m-auto py-2 h-full">
-          <div className="w-full h-[80px] flex items-center justify-between p-3">
-            <div>
-              <Link
-                href={"/"}
-                className={`text-[25px] font-Poppins font-[500] text-black dark:text-white`}
-              >
-                Elearning
-              </Link>
-            </div>
-            <div className="flex item-center text-black">
-              <NavItem activeItem={activeItem} isMobile={false} />
-              <ThemeSwitcher />
-              {/* Only for mobile  */}
-              <div className="md:hidden">
-                <HiOutlineMenuAlt3
-                  size={25}
-                  className="cursor-pointer dark:text-white text-black "
-                  onClick={() => setOpenSidebar(true)}
-                />
-              </div>
-              <HiOutlineUserCircle
+        {/* <div className="w-[95%] md:w-[92%] m-auto py-2 h-full"> */}
+        <div className="w-full h-[80px] flex items-center justify-between p-3">
+          <div>
+            <Link
+              href={"/"}
+              className={`text-[25px] font-Poppins font-[500] text-black dark:text-white`}
+            >
+              Elearning
+            </Link>
+          </div>
+          <div className="flex item-center text-black">
+            <NavItem
+              activeItem={activeItem}
+              isMobile={false}
+              setActiveItem={setActiveItem}
+            />
+            <ThemeSwitcher />
+            {/* Only for mobile  */}
+            <div className="md:hidden">
+              <HiOutlineMenuAlt3
                 size={25}
-                className="cursor-pointer dark:text-white text-black  hidden md:flex"
-                onClick={() => setOpen(true)}
+                className="cursor-pointer dark:text-white text-black "
+                onClick={() => setOpenSidebar(true)}
               />
             </div>
+            <HiOutlineUserCircle
+              size={25}
+              className="cursor-pointer dark:text-white text-black  hidden md:flex"
+              onClick={() => setOpen(true)}
+            />
           </div>
         </div>
+        {/* </div> */}
         {/* Mobile sidebar */}
         {openSidebar && (
           <div
@@ -89,7 +102,11 @@ const Header = ({ activeItem, open, route, setRoute, setOpen }: Props) => {
             id="screen"
           >
             <div className="w-[70%] fixed z-[99999999] h-screen bg-white dark:bg-slate-900 dark:bg-opacity-90 top-0 right-0 flex flex-col items-center ">
-              <NavItem activeItem={activeItem} isMobile={true} />
+              <NavItem
+                activeItem={activeItem}
+                isMobile={true}
+                setActiveItem={setActiveItem}
+              />
               <HiOutlineUserCircle
                 size={25}
                 className="cursor-pointer dark:text-white text-black  "
@@ -105,32 +122,39 @@ const Header = ({ activeItem, open, route, setRoute, setOpen }: Props) => {
           </div>
         )}
       </div>
-      {route === "Login" && (
-        <>
-          {open && (
-            <CustomModal
-              activeItem={activeItem}
-              open={open}
-              setOpen={setOpen}
-              setRoute={setRoute}
-              Component={Login}
-            />
-          )}
-        </>
-      )}
-      {route === "Sign-up" && (
-        <>
-          {open && (
-            <CustomModal
-              activeItem={activeItem}
-              open={open}
-              setOpen={setOpen}
-              setRoute={setRoute}
-              Component={SignUp}
-            />
-          )}
-        </>
-      )}
+      <motion.div
+        className="w-full"
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 1 }}
+      >
+        {route === "Login" && (
+          <>
+            {open && (
+              <CustomModal
+                activeItem={activeItem}
+                open={open}
+                setOpen={setOpen}
+                setRoute={setRoute}
+                Component={Login}
+              />
+            )}
+          </>
+        )}
+        {route === "Sign-up" && (
+          <>
+            {open && (
+              <CustomModal
+                activeItem={activeItem}
+                open={open}
+                setOpen={setOpen}
+                setRoute={setRoute}
+                Component={SignUp}
+              />
+            )}
+          </>
+        )}
+      </motion.div>
     </div>
   );
 };

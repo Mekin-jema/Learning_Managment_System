@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import { styles } from "../style/style";
 import * as Yup from "yup";
+import { motion } from "framer-motion";
 import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
@@ -34,7 +35,12 @@ const SignUp = ({ setRoute }: Props) => {
   const { errors, touched, values, handleChange, handleBlur, handleSubmit } =
     formik;
   return (
-    <div className="w-full ">
+    <motion.div
+      className="w-full"
+      initial={{ opacity: 0, x: -50 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 1 }}
+    >
       <h2 className={`${styles.title}`}>Register with E-Learning</h2>
       <form onSubmit={handleSubmit} className="p-5  ">
         <label className={`${styles.label}`} htmlFor="name">
@@ -45,7 +51,7 @@ const SignUp = ({ setRoute }: Props) => {
           name="name"
           value={values.name}
           id="name"
-          placeholder=" Name"
+          placeholder="Mekin Jemal"
           onChange={handleChange}
           className={`${errors.name && touched.name && "border-red-500 "} ${
             styles.input
@@ -62,7 +68,7 @@ const SignUp = ({ setRoute }: Props) => {
           name=""
           value={values.email}
           id="email"
-          placeholder="Email"
+          placeholder="mekinjemal999@gmail.com"
           onChange={handleChange}
           className={`${
             errors.password && touched.email && "border-red-500 "
@@ -81,7 +87,7 @@ const SignUp = ({ setRoute }: Props) => {
               name="password"
               value={values.password}
               id="Password"
-              placeholder="password"
+              placeholder="qwerty1234"
               onChange={handleChange}
               className={`${
                 errors.password && touched.password && "border-red-500 "
@@ -117,18 +123,18 @@ const SignUp = ({ setRoute }: Props) => {
           <AiFillGithub className="cursor-pointer ml-2" />
         </div>
         <br />
-        <h5 className=" text-cener pt-4 font-Poppins text-[14px]">
+        <h5 className=" flex justify-center pt-4 font-Poppins text-[14px]">
           have any account
           <span
             className="text-[#2190ff] pl-1 cursor-pointer "
             onClick={() => setRoute("Login")}
           >
-            Sign Up
+            Login
           </span>
         </h5>
       </form>
       <br />
-    </div>
+    </motion.div>
   );
 };
 

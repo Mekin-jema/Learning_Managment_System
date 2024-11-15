@@ -11,10 +11,11 @@ export const navItemsData = [
 
 type Props = {
   activeItem: number;
-  isMobile: boolean;
+  isMobile?: boolean;
+  setActiveItem: (activeItem: number) => void;
 };
 
-const NavItem = ({ activeItem, isMobile }: Props) => {
+const NavItem = ({ activeItem, isMobile, setActiveItem }: Props) => {
   return (
     <>
       <div className="hidden md:flex">
@@ -24,9 +25,10 @@ const NavItem = ({ activeItem, isMobile }: Props) => {
               <span
                 className={`${
                   activeItem === index
-                    ? "dark:text-[#37a39a] light:text-[crimson]" // need modification
+                    ? "dark:text-[#37a39a] light:text-[crimson]" // nceed modification
                     : "dark:text-white text-black"
-                }text-[18px] px-6 font-Poppins font-[400]`}
+                }text-[18px] px-6 font-Poppins font-[400]  hover:text-green `}
+                onClick={() => setActiveItem(index)}
               >
                 {item.name}
               </span>
