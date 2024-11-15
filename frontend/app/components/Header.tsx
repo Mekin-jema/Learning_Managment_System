@@ -8,6 +8,7 @@ import CustomModal from "../utils/CustomModal";
 import SignUp from "./Signup";
 import Login from "./Login";
 import { motion } from "framer-motion";
+import Verification from "./Verification";
 
 type Props = {
   route: string;
@@ -150,6 +151,19 @@ const Header = ({
                 setOpen={setOpen}
                 setRoute={setRoute}
                 Component={SignUp}
+              />
+            )}
+          </>
+        )}
+        {route === "Verification" && (
+          <>
+            {open && (
+              <CustomModal
+                activeItem={activeItem}
+                open={open}
+                setOpen={setOpen}
+                setRoute={setRoute}
+                Component={Verification}
               />
             )}
           </>

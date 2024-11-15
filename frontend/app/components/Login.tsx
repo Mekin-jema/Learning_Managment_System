@@ -28,7 +28,8 @@ const Login = ({ setRoute }: Props) => {
     initialValues: { email: "", password: "" },
     validationSchema: schema,
     onSubmit: async ({ email, password }) => {
-      console.log(email, password);
+      // console.log(email, password);
+      setRoute("Verification");
     },
   });
   const { errors, touched, values, handleChange, handleBlur, handleSubmit } =
@@ -102,10 +103,14 @@ const Login = ({ setRoute }: Props) => {
         </h5>
         <div className="flex items-center justify-center my-3  ">
           <FcGoogle size={30} className="cursor-pointer ml-2" />
-          <AiFillGithub className="cursor-pointer ml-2" />
+          <AiFillGithub
+            className="cursor-pointer ml-2 text-black dark:text-white"
+            size={30}
+          />
         </div>
+
         <br />
-        <h5 className=" flex justify-center  pt-4 font-Poppins text-[14px] ">
+        <h5 className=" flex justify-center  pt-4 font-Poppins text-[14px]  text-black dark:text-white">
           Not have any account
           <span
             className="text-[#2190ff] pl-1 cursor-pointer "

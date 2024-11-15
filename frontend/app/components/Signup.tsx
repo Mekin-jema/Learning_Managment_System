@@ -29,7 +29,7 @@ const SignUp = ({ setRoute }: Props) => {
     initialValues: { email: "", password: "", name: "" },
     validationSchema: schema,
     onSubmit: async ({ email, password, name }) => {
-      console.log(email, password, name);
+      setRoute("Verification");
     },
   });
   const { errors, touched, values, handleChange, handleBlur, handleSubmit } =
@@ -112,24 +112,34 @@ const SignUp = ({ setRoute }: Props) => {
           )}
         </div>
         <div className="w-full mt-5">
-          <input type="submit" value="Login" className={`${styles.button}`} />
+          <input
+            type="submit"
+            value="SignUP"
+            onBlur={handleBlur}
+            className={`${styles.button}`}
+          />
         </div>
-        <br />
         <h5 className="text-center pt-4 font-Poppins text-[14px] text-black dark:text-white ">
           Or Join with
         </h5>
         <div className="flex items-center justify-center my-3  ">
-          <FcGoogle size={30} className="cursor-pointer ml-2" />
-          <AiFillGithub className="cursor-pointer ml-2" />
+          <FcGoogle
+            size={30}
+            className="cursor-pointer ml-2 text-black dark:text-white"
+          />
+          <AiFillGithub
+            size={30}
+            className="cursor-pointer ml-2 text-black dark:text-white "
+          />
         </div>
-        <br />
-        <h5 className=" flex justify-center pt-4 font-Poppins text-[14px]">
+
+        <h5 className=" flex justify-center pt-4 font-Poppins text-[14px] text-black dark:text-white  mr-2">
           have any account
           <span
             className="text-[#2190ff] pl-1 cursor-pointer "
             onClick={() => setRoute("Login")}
           >
-            Login
+            LogIn
           </span>
         </h5>
       </form>
