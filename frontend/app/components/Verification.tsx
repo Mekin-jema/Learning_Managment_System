@@ -22,12 +22,14 @@ const Verification = ({ setRoute }: Props) => {
   useEffect(() => {
     if (isSuccess) {
       toast.success("Account Verified Successfully");
+
       setRoute("Login");
     }
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
         toast.error(errorData.data.message);
+        setInvalidError(true);
       } else {
         console.log(error);
       }
@@ -41,7 +43,15 @@ const Verification = ({ setRoute }: Props) => {
     useRef<HTMLInputElement>(null),
   ];
   const verificationHandler = async () => {
-    setInvalidError(true);
+    const verificaionNumber = Object.values(verifyNumber).join("");
+    if (verificaionNumber.length < 4) {
+      setInvalidError(true);
+      return;
+    }
+    await activation({
+      activation_token: token,
+      activation_code: verificaionNumber,
+    });
   };
   const [verifyNumber, setVerifyNumber] = useState<VerifyNumber>({
     0: "",
@@ -49,6 +59,7 @@ const Verification = ({ setRoute }: Props) => {
     2: "",
     3: "",
   });
+
   const handleInputChange = (index: number, value: string) => {
     setInvalidError(false);
     const newVerifyNumber = { ...verifyNumber, [index]: value };

@@ -38,7 +38,6 @@ const SignUp = ({ setRoute }: Props) => {
       if ("data" in error) {
         const errorData = error as any;
         toast.error(errorData.data.message);
-        return;
       }
     }
     if (isSuccess) {
@@ -59,7 +58,7 @@ const SignUp = ({ setRoute }: Props) => {
       console.log(data);
       await register(data); //calling the register mutation
 
-      setRoute("Verification");
+      // setRoute("Verification");
     },
   });
   const { errors, touched, values, handleChange, handleBlur, handleSubmit } =
