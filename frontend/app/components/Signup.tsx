@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { styles } from "../style/style";
 import * as Yup from "yup";
@@ -9,7 +9,9 @@ import {
   AiOutlineEyeInvisible,
   AiFillGithub,
 } from "react-icons/ai";
+import { useRegisterMutation } from "@/Redux/features/auth/authApi";
 import { FcGoogle } from "react-icons/fc";
+import { toast } from "react-hot-toast";
 type Props = {
   setRoute: (route: string) => void;
 };
@@ -23,12 +25,40 @@ const schema = Yup.object().shape({
   cpassowrd: Yup.string().oneOf([Yup.ref("passowrd")], "Passowrd is not mutch"),
 });
 
+// SignUp component
+
 const SignUp = ({ setRoute }: Props) => {
+  //useState hooks
   const [show, setShow] = useState(false);
+  const [register, { data, error, isSuccess }] = useRegisterMutation();
+  //useEffect hook for toast notification
+
+  useEffect(() => {
+    if (error) {
+      if ("data" in error) {
+        const errorData = error as any;
+        toast.error(errorData.data.message);
+        return;
+      }
+    }
+    if (isSuccess) {
+      const message = data?.message || "User Registered Successfully";
+      toast.success(message);
+      setRoute("Verification");
+    }
+  }, [isSuccess, error]);
+
+  //formik used for form validation
+
   const formik = useFormik({
     initialValues: { email: "", password: "", name: "" },
     validationSchema: schema,
+    //onSubmit function
     onSubmit: async ({ email, password, name }) => {
+      const data = { email, password, name };
+      console.log(data);
+      await register(data); //calling the register mutation
+
       setRoute("Verification");
     },
   });
