@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
 import { styles } from "../style/style";
 import * as Yup from "yup";
@@ -10,8 +10,11 @@ import {
 } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { motion } from "framer-motion";
+import { useLoginMutation } from "@/Redux/features/auth/authApi";
+import toast from "react-hot-toast";
 type Props = {
   setRoute: (route: string) => void;
+  setOpen: (open: boolean) => void;
 };
 
 const schema = Yup.object().shape({
@@ -22,18 +25,44 @@ const schema = Yup.object().shape({
   cpassowrd: Yup.string().oneOf([Yup.ref("passowrd")], "Passowrd is not mutch"),
 });
 
-const Login = ({ setRoute }: Props) => {
+const Login = ({ setRoute, setOpen }: Props) => {
   const [show, setShow] = useState(false);
+
+  //
+  const [login, { isSuccess, isError, error, data }] = useLoginMutation();
+
+  //
+
   const formik = useFormik({
     initialValues: { email: "", password: "" },
     validationSchema: schema,
     onSubmit: async ({ email, password }) => {
       // console.log(email, password);
-      setRoute("Verification");
+      const data = { email, password };
+      await login(data);
     },
   });
   const { errors, touched, values, handleChange, handleBlur, handleSubmit } =
     formik;
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Login Successfully!");
+      setOpen(false);
+    }
+    if (isError && error) {
+      console.log("error", error, "isError", isError);
+      if ("data" in error) {
+        const errorData = error as any;
+        if (errorData.data.message) {
+          toast.error(errorData.data.message);
+        } else {
+          toast.error("An unknown error occurred.");
+        }
+      }
+    }
+  }, [isSuccess, isError, error]);
+
   return (
     <motion.div
       className="w-full"

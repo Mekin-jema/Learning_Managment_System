@@ -19,7 +19,7 @@ const CustomModal = ({ open, setOpen, setRoute, Component }: Props) => {
       aria-describedby="modal-modal-description"
     >
       <Box className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[450px] bg-white dark:bg-slate-900 shadow py-4 outline-none">
-        <Component setRoute={setRoute} />
+        <Component setRoute={setRoute} setOpen={setOpen} />
       </Box>
     </Modal>
   );

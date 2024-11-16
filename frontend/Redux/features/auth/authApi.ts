@@ -1,6 +1,7 @@
 "use client";
+import { url } from "inspector";
 import { apiSlice } from "../api/apiSlice";
-import { userRegistration } from "./authSlice";
+import { userLoggedIn, userRegistration } from "./authSlice";
 
 type RegistrationResponse = {
   message: string;
@@ -14,7 +15,7 @@ export const authApi = apiSlice.injectEndpoints({
     //endpoint for user registration
     register: builder.mutation<RegistrationResponse, RegistrationData>({
       query: (data) => ({
-        url: "/register",
+        url: "register",
         method: "POST",
         body: data,
         credentials: "include" as const,
@@ -34,13 +35,43 @@ export const authApi = apiSlice.injectEndpoints({
     }),
     activation: builder.mutation({
       query: ({ activation_token, activation_code }) => ({
-        url: "/activate-user",
+        url: "activate-user",
         method: "POST",
         body: { activation_token, activation_code },
         // credentials:"include" as const
       }),
     }),
+
+    login: builder.mutation({
+      query: ({ email, password }) => ({
+        url: "login",
+        method: "POST",
+        body: {
+          email,
+          password,
+        },
+        credentials: "include" as const,
+      }),
+      async onQueryStarted(data, { dispatch, queryFulfilled }) {
+        try {
+          const response = await queryFulfilled;
+          dispatch(
+            userLoggedIn({
+              accessToken: response.data.accessToken,
+              user: response.data.user,
+            })
+          );
+        } catch (error: any) {
+          if (error.error) {
+            console.error("Error:", error.error.data.message);
+          } else {
+            console.error("Unexpected error:", error);
+          }
+        }
+      },
+    }),
   }),
 });
 
-export const { useRegisterMutation, useActivationMutation } = authApi;
+export const { useRegisterMutation, useLoginMutation, useActivationMutation } =
+  authApi;

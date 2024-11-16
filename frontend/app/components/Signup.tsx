@@ -30,14 +30,14 @@ const schema = Yup.object().shape({
 const SignUp = ({ setRoute }: Props) => {
   //useState hooks
   const [show, setShow] = useState(false);
-  const [register, { data, error, isSuccess }] = useRegisterMutation();
+  const [register, { data, isError, error, isSuccess }] = useRegisterMutation();
   //useEffect hook for toast notification
 
   useEffect(() => {
     if (error) {
       if ("data" in error) {
         const errorData = error as any;
-        toast.error(errorData.data.message);
+        toast.error("User Already exist");
       }
     }
     if (isSuccess) {
