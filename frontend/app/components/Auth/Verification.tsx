@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { VscWorkspaceTrusted } from "react-icons/vsc";
-import { styles } from "../style/style";
+import { styles } from "../../style/style";
 import { useActivationMutation } from "@/Redux/features/auth/authApi";
 import { useSelector } from "react-redux";
 type Props = {

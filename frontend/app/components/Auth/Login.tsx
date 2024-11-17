@@ -1,23 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useFormik } from "formik";
-import { styles } from "../style/style";
+import { styles } from "../../style/style";
 import * as Yup from "yup";
-import { motion } from "framer-motion";
 import {
   AiOutlineEye,
   AiOutlineEyeInvisible,
   AiFillGithub,
 } from "react-icons/ai";
-import { useRegisterMutation } from "@/Redux/features/auth/authApi";
 import { FcGoogle } from "react-icons/fc";
-import { toast } from "react-hot-toast";
+import { motion } from "framer-motion";
+import { useLoginMutation } from "@/Redux/features/auth/authApi";
+import toast from "react-hot-toast";
+import { signIn } from "next-auth/react";
 type Props = {
   setRoute: (route: string) => void;
+  setOpen: (open: boolean) => void;
 };
 
 const schema = Yup.object().shape({
-  name: Yup.string().required("Please enter your name"),
   email: Yup.string()
     .email("invalid email")
     .required("Please enter  your email"),
@@ -25,70 +26,53 @@ const schema = Yup.object().shape({
   cpassowrd: Yup.string().oneOf([Yup.ref("passowrd")], "Passowrd is not mutch"),
 });
 
-// SignUp component
-
-const SignUp = ({ setRoute }: Props) => {
-  //useState hooks
+const Login = ({ setRoute, setOpen }: Props) => {
   const [show, setShow] = useState(false);
-  const [register, { data, isError, error, isSuccess }] = useRegisterMutation();
-  //useEffect hook for toast notification
 
-  useEffect(() => {
-    if (error) {
-      if ("data" in error) {
-        const errorData = error as any;
-        toast.error("User Already exist");
-      }
-    }
-    if (isSuccess) {
-      const message = data?.message || "User Registered Successfully";
-      toast.success(message);
-      setRoute("Verification");
-    }
-  }, [isSuccess, error]);
+  //
+  const [login, { isSuccess, isError, error, data }] = useLoginMutation();
 
-  //formik used for form validation
+  //
 
   const formik = useFormik({
-    initialValues: { email: "", password: "", name: "" },
+    initialValues: { email: "", password: "" },
     validationSchema: schema,
-    //onSubmit function
-    onSubmit: async ({ email, password, name }) => {
-      const data = { email, password, name };
-      console.log(data);
-      await register(data); //calling the register mutation
-
-      // setRoute("Verification");
+    onSubmit: async ({ email, password }) => {
+      // console.log(email, password);
+      const data = { email, password };
+      await login(data);
     },
   });
   const { errors, touched, values, handleChange, handleBlur, handleSubmit } =
     formik;
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Login Successfully!");
+      setOpen(false);
+    }
+    if (isError && error) {
+      console.log("error", error, "isError", isError);
+      if ("data" in error) {
+        const errorData = error as any;
+        if (errorData.data.message) {
+          toast.error(errorData.data.message);
+        } else {
+          toast.error("An unknown error occurred.");
+        }
+      }
+    }
+  }, [isSuccess, isError, error]);
+
   return (
     <motion.div
       className="w-full"
-      initial={{ opacity: 0, x: -50 }}
-      animate={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, y: 100 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1 }}
     >
-      <h2 className={`${styles.title}`}>Register with E-Learning</h2>
+      <h2 className={`${styles.title}`}>Login with E-Learning</h2>
       <form onSubmit={handleSubmit} className="p-5  ">
-        <label className={`${styles.label}`} htmlFor="name">
-          Enter your Name
-        </label>
-        <input
-          type="text"
-          name="name"
-          value={values.name}
-          id="name"
-          placeholder="Mekin Jemal"
-          onChange={handleChange}
-          className={`${errors.name && touched.name && "border-red-500 "} ${
-            styles.input
-          }`}
-        />
-        {errors.email && touched.email && (
-          <span className="text-red-500 pt-2 block">{errors.email}</span>
-        )}
         <label className={`${styles.label}`} htmlFor="email">
           Enter your Email
         </label>
@@ -115,7 +99,7 @@ const SignUp = ({ setRoute }: Props) => {
               type={!show ? "password" : "text"}
               name="password"
               value={values.password}
-              id="Password"
+              id="password"
               placeholder="qwerty1234"
               onChange={handleChange}
               className={`${
@@ -141,34 +125,33 @@ const SignUp = ({ setRoute }: Props) => {
           )}
         </div>
         <div className="w-full mt-5">
-          <input
-            type="submit"
-            value="SignUP"
-            onBlur={handleBlur}
-            className={`${styles.button}`}
-          />
+          <input type="submit" value="Login" className={`${styles.button}`} />
         </div>
+        <br />
         <h5 className="text-center pt-4 font-Poppins text-[14px] text-black dark:text-white ">
           Or Join with
         </h5>
         <div className="flex items-center justify-center my-3  ">
           <FcGoogle
             size={30}
-            className="cursor-pointer ml-2 text-black dark:text-white"
+            className="cursor-pointer ml-2"
+            onClick={() => signIn("google")}
           />
           <AiFillGithub
+            onClick={() => signIn("github")}
+            className="cursor-pointer ml-2 text-black dark:text-white"
             size={30}
-            className="cursor-pointer ml-2 text-black dark:text-white "
           />
         </div>
 
-        <h5 className=" flex justify-center pt-4 font-Poppins text-[14px] text-black dark:text-white  mr-2">
-          have any account
+        <br />
+        <h5 className=" flex justify-center  pt-4 font-Poppins text-[14px]  text-black dark:text-white">
+          Not have any account
           <span
             className="text-[#2190ff] pl-1 cursor-pointer "
-            onClick={() => setRoute("Login")}
+            onClick={() => setRoute("Sign-up")}
           >
-            LogIn
+            Sign Up
           </span>
         </h5>
       </form>
@@ -177,4 +160,4 @@ const SignUp = ({ setRoute }: Props) => {
   );
 };
 
-export default SignUp;
+export default Login;

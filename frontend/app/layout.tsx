@@ -8,7 +8,7 @@ import { Provider } from "react-redux";
 import { store } from "../Redux/store";
 import { SessionProvider } from "next-auth/react";
 import { useGetUserQuery } from "@/Redux/features/api/apiSlice";
-import Loader from "./components/Loader";
+import Loader from "./components/Loader/Loader";
 
 export const poppins = Poppins({
   subsets: ["latin"],
