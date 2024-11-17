@@ -70,8 +70,41 @@ export const authApi = apiSlice.injectEndpoints({
         }
       },
     }),
+    socialAuth: builder.mutation({
+      query: ({ email, name, avatar }) => ({
+        url: "social-auth",
+        method: "POST",
+        body: {
+          email,
+          name,
+          avatar,
+        },
+        credentials: "include" as const,
+      }),
+      async onQueryStarted(data, { dispatch, queryFulfilled }) {
+        try {
+          const response = await queryFulfilled;
+          dispatch(
+            userLoggedIn({
+              accessToken: response.data.accessToken,
+              user: response.data.user,
+            })
+          );
+        } catch (error: any) {
+          if (error.error) {
+            console.error("Error:", error.error.data.message);
+          } else {
+            console.error("Unexpected error:", error);
+          }
+        }
+      },
+    }),
   }),
 });
 
-export const { useRegisterMutation, useLoginMutation, useActivationMutation } =
-  authApi;
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useActivationMutation,
+  useSocialAuthMutation,
+} = authApi;

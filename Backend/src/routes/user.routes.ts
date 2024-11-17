@@ -22,9 +22,9 @@ router.post("/register", registrationUser); // /api/v1/register
 router.post("/activate-user", activateUser);
 router.post("/login", loginUser);
 router.post("/logout", isAuthenticated, logoutUser);
-router.get("/refeshToken", updateAccessToken);
+router.get("/refreshToken", updateAccessToken);
 router.get("/getUserInfo", isAuthenticated, getUserInfo);
-router.post("/socialAuth", socialAuth);
+router.post("/social-auth", socialAuth);
 router.put("/updateUserInfo", isAuthenticated, updateUserInfo);
 router.post("/update-user-password", isAuthenticated, updatePassword);
 router.put("/update-profile", isAuthenticated, updateProfile);

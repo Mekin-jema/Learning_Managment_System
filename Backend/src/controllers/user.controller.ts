@@ -275,6 +275,7 @@ export const socialAuth = CatchAsyncError(
           name,
           avatar,
           // isVerified:true
+          password: email + Math.floor(1000 + Math.random() * 9000).toString(),
         });
 
         sendToken(newUser, 200, res);

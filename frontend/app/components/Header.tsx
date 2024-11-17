@@ -9,7 +9,12 @@ import SignUp from "./Signup";
 import Login from "./Login";
 import { motion } from "framer-motion";
 import Verification from "./Verification";
-
+import { useSelector } from "react-redux";
+import Image from "next/image";
+import avatar from "../../public/avatar.png";
+import { useSession } from "next-auth/react";
+import { useSocialAuthMutation } from "@/Redux/features/auth/authApi";
+import toast from "react-hot-toast";
 type Props = {
   route: string;
   open: boolean;
@@ -30,6 +35,29 @@ const Header = ({
   const [active, setActive] = useState(false);
   const [openSidebar, setOpenSidebar] = useState(false);
 
+  const { user } = useSelector((state: any) => state.auth);
+  console.log("user", user);
+  const { data } = useSession();
+  const [socialAuth, { isSuccess, isError, error }] = useSocialAuthMutation();
+
+  useEffect(() => {
+    if (!user) {
+      if (data) {
+        socialAuth({
+          email: data?.user?.email,
+          name: data?.user?.name,
+          avatar: data?.user?.image,
+        });
+      }
+    }
+    if (isSuccess) {
+      // setOpen(false);
+      toast.success("Login successful");
+    }
+  }, [data, user]);
+
+  // console.log(user);
+  console.log(data);
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleScroll = () => {
@@ -80,18 +108,28 @@ const Header = ({
             />
             <ThemeSwitcher />
             {/* Only for mobile  */}
-            <div className="md:hidden">
+            <div className="md:hidden items-center  justify-center">
               <HiOutlineMenuAlt3
                 size={25}
                 className="cursor-pointer dark:text-white text-black "
                 onClick={() => setOpenSidebar(true)}
               />
             </div>
-            <HiOutlineUserCircle
-              size={25}
-              className="cursor-pointer dark:text-white text-black  hidden md:flex"
-              onClick={() => setOpen(true)}
-            />
+            {user ? (
+              <Link href={"/profile"}>
+                <Image
+                  src={user.avatar ? user.avatar : avatar}
+                  alt="Profile"
+                  className="w-[30px] h-[30px] rounded-full cursor-pointer"
+                />
+              </Link>
+            ) : (
+              <HiOutlineUserCircle
+                size={25}
+                className="cursor-pointer dark:text-white text-black  hidden md:flex"
+                onClick={() => setOpen(true)}
+              />
+            )}
           </div>
         </div>
         {/* </div> */}
