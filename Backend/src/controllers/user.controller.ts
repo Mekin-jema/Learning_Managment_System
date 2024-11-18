@@ -395,6 +395,7 @@ cloudinary.config({
 export const updateProfile = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      console.log("I am inside update profile");
       const { avatar } = req.body as IUpdateProfile;
       const userId = req.user?._id as string;
       const user = await User.findById(userId);

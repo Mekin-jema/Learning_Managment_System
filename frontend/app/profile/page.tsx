@@ -10,14 +10,14 @@ import { useSelector } from "react-redux";
 
 const page = (props: Props) => {
   const [open, setOpen] = useState(false);
-  const [activeItem, setActiveItem] = useState(0);
+  const [activeItem, setActiveItem] = useState(5);
   const [route, setRoute] = useState("Sign-up");
   const { user } = useSelector((state: any) => state.auth);
   return (
     <div>
       <Protected>
         <Heading
-          title={`${user.name} Profile`}
+          title={`${user?.name ? user.name : ""} Profile`}
           description="See Freely with ICT SMC simplified"
           keywords="ICT, SMC, simplified, see, freely, tea"
         />

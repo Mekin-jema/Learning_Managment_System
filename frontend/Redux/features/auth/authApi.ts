@@ -1,7 +1,7 @@
 "use client";
 import { url } from "inspector";
 import { apiSlice } from "../api/apiSlice";
-import { userLoggedIn, userRegistration } from "./authSlice";
+import { userLoggedIn, userLoggedOut, userRegistration } from "./authSlice";
 
 type RegistrationResponse = {
   message: string;
@@ -84,12 +84,31 @@ export const authApi = apiSlice.injectEndpoints({
       async onQueryStarted(data, { dispatch, queryFulfilled }) {
         try {
           const response = await queryFulfilled;
+          console.log("response from server", response.data);
           dispatch(
             userLoggedIn({
               accessToken: response.data.accessToken,
               user: response.data.user,
             })
           );
+        } catch (error: any) {
+          if (error.error) {
+            console.error("Error:", error.error.data.message);
+          } else {
+            console.error("Unexpected error:", error);
+          }
+        }
+      },
+    }),
+    logoutUser: builder.query({
+      query: () => ({
+        url: "logout",
+        method: "POST",
+        credentials: "include" as const,
+      }),
+      async onQueryStarted(data, { dispatch, queryFulfilled }) {
+        try {
+          dispatch(userLoggedOut());
         } catch (error: any) {
           if (error.error) {
             console.error("Error:", error.error.data.message);
@@ -107,4 +126,5 @@ export const {
   useLoginMutation,
   useActivationMutation,
   useSocialAuthMutation,
+  useLogoutUserQuery,
 } = authApi;

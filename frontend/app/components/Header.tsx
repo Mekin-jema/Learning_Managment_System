@@ -13,7 +13,10 @@ import { useSelector } from "react-redux";
 import Image from "next/image";
 import avatar from "../../public/avatar.png";
 import { useSession } from "next-auth/react";
-import { useSocialAuthMutation } from "@/Redux/features/auth/authApi";
+import {
+  useLogoutUserQuery,
+  useSocialAuthMutation,
+} from "@/Redux/features/auth/authApi";
 import toast from "react-hot-toast";
 type Props = {
   route: string;
@@ -39,6 +42,8 @@ const Header = ({
   console.log("user", user);
   const { data } = useSession();
   const [socialAuth, { isSuccess, isError, error }] = useSocialAuthMutation();
+  const [logout, setLogout] = useState(false);
+  const {} = useLogoutUserQuery(undefined, { skip: !logout ? true : false });
 
   useEffect(() => {
     if (!user) {
@@ -50,9 +55,14 @@ const Header = ({
         });
       }
     }
-    if (isSuccess) {
-      // setOpen(false);
-      toast.success("Login successful");
+    if (data === null) {
+      if (isSuccess) {
+        // setOpen(false);
+        toast.success("Login successful");
+      }
+    }
+    if (data === null) {
+      setLogout(true);
     }
   }, [data, user]);
 
@@ -118,9 +128,14 @@ const Header = ({
             {user ? (
               <Link href={"/profile"}>
                 <Image
-                  src={user.avatar ? user.avatar : avatar}
+                  src={user.avatar ? user.avatar.url : avatar}
                   alt="Profile"
-                  className="w-[30px] h-[30px] rounded-full cursor-pointer"
+                  width={20}
+                  height={20}
+                  className="w-[30px] h-[30px] rounded-full cursor-pointer" // tailwind css is not working here
+                  style={{
+                    border: activeItem === 5 ? "2px solid #37a39a" : "",
+                  }}
                 />
               </Link>
             ) : (
