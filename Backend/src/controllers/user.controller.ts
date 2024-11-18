@@ -304,16 +304,16 @@ interface IUpdateUser {
 export const updateUserInfo = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { name, email } = req.body as IUpdateUser;
+      const { name } = req.body as IUpdateUser;
       const userId = req.user?._id as string;
       const user = await User.findById(userId);
-      if (email && user) {
-        const userExist = await User.findOne({ email });
-        if (userExist) {
-          return next(new ErrorHandler(400, "Email already exists"));
-        }
-        user.email = email;
-      }
+      // if (email && user) {
+      //   const userExist = await User.findOne({ email });
+      //   if (userExist) {
+      //     return next(new ErrorHandler(400, "Email already exists"));
+      //   }
+      //   user.email = email;
+      // }
 
       if (name && user) {
         user.name = name;

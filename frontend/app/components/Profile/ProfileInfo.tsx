@@ -4,7 +4,10 @@ import Image from "next/image";
 import avatars from "../../../public/avatar.png";
 import { AiOutlineCamera } from "react-icons/ai";
 import { styles } from "../../style/style";
-import { useUpdateAvatarMutation } from "@/Redux/features/user/userApi";
+import {
+  useEditProfileMutation,
+  useUpdateAvatarMutation,
+} from "@/Redux/features/user/userApi";
 import { useLogoutUserQuery } from "@/Redux/features/auth/authApi";
 type Props = {
   avatar: string | null;
@@ -12,8 +15,12 @@ type Props = {
 };
 
 const ProfileInfo = ({ avatar, user }: Props) => {
-  const [name, setName] = useState(user && user.name);
+  const [name, setName] = useState(user?.name || "");
   const [loadUser, setLoadUser] = useState(false);
+  const [
+    editProfile,
+    { error: editProfileError, isSuccess: editProfileSuccess },
+  ] = useEditProfileMutation();
   const {} = useLogoutUserQuery(undefined, { skip: loadUser ? false : true }); //logout user
   const [updateAvatar, { isSuccess, error }] = useUpdateAvatarMutation();
   // update avatar
@@ -30,17 +37,31 @@ const ProfileInfo = ({ avatar, user }: Props) => {
     fileReader.readAsDataURL(file);
   };
 
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     //   console.log("success");
+  //     setLoadUser(true);
+  //   }
+  //   if (error) {
+  //     console.log("error", error);
+  //   }
+  // }, [isSuccess, error]);
+
   useEffect(() => {
-    if (isSuccess) {
-      //   console.log("success");
+    if (isSuccess || editProfileSuccess) {
       setLoadUser(true);
     }
-    if (error) {
-      console.log("error", error);
+    if (error || editProfileError) {
+      console.log(editProfileError, error);
     }
-  }, [isSuccess, error]);
+  }, [editProfileSuccess, editProfileError, isSuccess, error]);
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    if (name !== "")
+      await editProfile({
+        name: name,
+      });
     // console.log(first)
   };
 
@@ -84,7 +105,7 @@ const ProfileInfo = ({ avatar, user }: Props) => {
                 type="text"
                 className={`${styles.input}`}
                 onChange={(e) => setName(e.target.value)}
-                value={user?.name}
+                value={name}
               />
             </div>
             <div className=" w-[100%] pt-2">
