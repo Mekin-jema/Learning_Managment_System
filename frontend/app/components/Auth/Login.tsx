@@ -30,7 +30,7 @@ const Login = ({ setRoute, setOpen }: Props) => {
   const [show, setShow] = useState(false);
 
   //
-  const [login, { isSuccess, isError, error, data }] = useLoginMutation();
+  const [login, { isSuccess, error, data }] = useLoginMutation();
 
   //
 
@@ -51,8 +51,8 @@ const Login = ({ setRoute, setOpen }: Props) => {
       toast.success("Login Successfully!");
       setOpen(false);
     }
-    if (isError && error) {
-      console.log("error", error, "isError", isError);
+    if (error) {
+      console.log("error", error);
       if ("data" in error) {
         const errorData = error as any;
         if (errorData.data.message) {
@@ -62,7 +62,7 @@ const Login = ({ setRoute, setOpen }: Props) => {
         }
       }
     }
-  }, [isSuccess, isError, error]);
+  }, [isSuccess, error]);
 
   return (
     <motion.div

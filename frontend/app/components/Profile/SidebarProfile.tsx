@@ -6,6 +6,8 @@ import avatarDefault from "../../../public/avatar.png";
 import { RiH5, RiLockPasswordFill } from "react-icons/ri";
 import { SiCoursera } from "react-icons/si";
 import { AiOutlineLogout } from "react-icons/ai";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
+import Link from "next/link";
 
 type Props = {
   user: any;
@@ -53,26 +55,6 @@ const SidebarProfile = ({
         }`}
         onClick={() => setActive(2)}
       >
-        <SiCoursera
-          size={20}
-          className={`${
-            active === 2
-              ? "text-black dark:text-white"
-              : "text-gray-500 dark:text-gray-400"
-          }`}
-        />
-        <h5 className="pl-2 md:block hidden font-Poppins text-black dark:text-white">
-          Enrolled Courses
-        </h5>
-      </div>
-      <div
-        className={`w-full flex items-center px-3 py-4 cursor-pointer ${
-          active === 3
-            ? "dark:bg-slate-800 bg-white border-b border-[#d6d3d3] dark:border-[#727272] "
-            : "bg-transparent"
-        }`}
-        onClick={() => setActive(3)}
-      >
         <RiLockPasswordFill
           size={20}
           className={`${
@@ -85,6 +67,49 @@ const SidebarProfile = ({
           Change Password
         </h5>
       </div>
+      <div
+        className={`w-full flex items-center px-3 py-4 cursor-pointer ${
+          active === 3
+            ? "dark:bg-slate-800 bg-white border-b border-[#d6d3d3] dark:border-[#727272] "
+            : "bg-transparent"
+        }`}
+        onClick={() => setActive(3)}
+      >
+        <SiCoursera
+          size={20}
+          className={`${
+            active === 2
+              ? "text-black dark:text-white"
+              : "text-gray-500 dark:text-gray-400"
+          }`}
+        />
+        <h5 className="pl-2 md:block hidden font-Poppins text-black dark:text-white">
+          Enrolled Courses
+        </h5>
+      </div>
+
+      {user && user.role === "admin" && (
+        <Link
+          className={`w-full flex items-center px-3 py-4 cursor-pointer ${
+            active === 4
+              ? "dark:bg-slate-800 bg-white border-b border-[#d6d3d3] dark:border-[#727272] "
+              : "bg-transparent"
+          }`}
+          href={"/admin"}
+        >
+          <MdOutlineAdminPanelSettings
+            size={20}
+            className={`${
+              active === 2
+                ? "text-black dark:text-white"
+                : "text-gray-500 dark:text-gray-400"
+            }`}
+          />
+          <h5 className="pl-2 md:block hidden font-Poppins text-black dark:text-white">
+            Admin Dashboard
+          </h5>
+        </Link>
+      )}
       <div
         className={`w-full flex items-center px-3 py-4 cursor-pointer bg-transparent`}
       >

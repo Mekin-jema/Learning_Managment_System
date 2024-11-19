@@ -9,6 +9,7 @@ import {
   useUpdateAvatarMutation,
 } from "@/Redux/features/user/userApi";
 import { useLogoutUserQuery } from "@/Redux/features/auth/authApi";
+import toast from "react-hot-toast";
 type Props = {
   avatar: string | null;
   user: any;
@@ -24,6 +25,7 @@ const ProfileInfo = ({ avatar, user }: Props) => {
   const {} = useLogoutUserQuery(undefined, { skip: loadUser ? false : true }); //logout user
   const [updateAvatar, { isSuccess, error }] = useUpdateAvatarMutation();
   // update avatar
+
   const imageHandler = async (e: any) => {
     const file = e.target.files[0];
     const fileReader = new FileReader();
@@ -53,6 +55,9 @@ const ProfileInfo = ({ avatar, user }: Props) => {
     }
     if (error || editProfileError) {
       console.log(editProfileError, error);
+    }
+    if (editProfileSuccess) {
+      toast.success("Profile updated successfully");
     }
   }, [editProfileSuccess, editProfileError, isSuccess, error]);
 
