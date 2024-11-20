@@ -13,6 +13,7 @@ import Wysiwyg from "@mui/icons-material/Wysiwyg";
 import ManageHistory from "@mui/icons-material/ManageHistory";
 import Settings from "@mui/icons-material/Settings";
 import ExitToApp from "@mui/icons-material/ExitToApp";
+import Groups from "@mui/icons-material/Groups";
 
 export {
   HomeOutlined,
@@ -30,4 +31,5 @@ export {
   ManageHistory,
   Settings,
   ExitToApp,
+  Groups,
 };

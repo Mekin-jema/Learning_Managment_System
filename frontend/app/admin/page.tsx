@@ -1,26 +1,31 @@
+// Add "use client"; at the very beginning of the file
 "use client";
+
 import React from "react";
 import Heading from "../utils/Heading";
 import AdminProtected from "../hooks/adminProtected";
-import AdminSidbar from "../components/Admin/sidebar/AdminSidbar";
+import AdminSidbar from "../components/Admin/AdminSidbar";
 import DashboardHero from "../components/Admin/sidebar/DashboeardHero";
 
 type Props = {};
 
-const page = (props: Props) => {
+const Page = (props: Props) => {
+  // Capitalize component name for convention
   return (
     <div>
       <AdminProtected>
         <Heading
-          title="Elearin -Admin"
-          description=" Elearing is a platform for student sot learn and  get help  from teachers "
-          keywords="Programming ,MERN ,Redux, Machine learing"
+          title="Elearn - Admin"
+          description="Elearning is a platform for students to learn and get help from teachers."
+          keywords="Programming, MERN, Redux, Machine Learning"
         />
-        <div className="flex  h-[200vh]">
-          <div className="4xl:w-[16%] w-1/5">
+        <div className="flex h-[200vh]">
+          <div className="w-1/5 xl:w-[16%]">
+        
             <AdminSidbar />
           </div>
-          <div className="w-[85%]">
+          <div className="w-4/5">
+          
             <DashboardHero />
           </div>
         </div>
@@ -29,4 +34,4 @@ const page = (props: Props) => {
   );
 };
 
-export default page;
+export default Page; // Ensure the component name matches the export
