@@ -208,6 +208,14 @@ const CourseInformation = ({
             )}
           </label>
         </div>
+        <br />
+        <div className="w-full flex items-center justify-end">
+          <input
+            type="submit"
+            value="Next"
+            className="w-full xl:w-[180px] h-[40px] bg-[#37a39a] text-center text-[#fff] mt-0 rounded cursor-pointer "
+          />
+        </div>
       </form>
     </div>
   );

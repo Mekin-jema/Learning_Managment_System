@@ -14,6 +14,7 @@ import ManageHistory from "@mui/icons-material/ManageHistory";
 import Settings from "@mui/icons-material/Settings";
 import ExitToApp from "@mui/icons-material/ExitToApp";
 import Groups from "@mui/icons-material/Groups";
+import AddCircle from "@mui/icons-material/AddCircle";
 
 export {
   HomeOutlined,
@@ -32,4 +33,6 @@ export {
   Settings,
   ExitToApp,
   Groups,
+  AddCircle
+
 };

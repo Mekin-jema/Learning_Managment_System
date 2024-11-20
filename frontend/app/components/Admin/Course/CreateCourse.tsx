@@ -3,11 +3,12 @@
 import { useState } from "react";
 import CourseInformation from "./CourseInformation";
 import CourseOption from "./CourseOption";
-
+import CourseData from "./CourseData";
+import CourseContent from "./CourseContent";
 type Props = {};
 
 const CreateCourse = (props: Props) => {
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(2);
   const [courseInfo, setCourseInfo] = useState({
     name: "",
     description: "",
@@ -18,8 +19,8 @@ const CreateCourse = (props: Props) => {
     demoUrl: "",
     thumbnail: "",
   });
-  const [benefits, setBenefits] = useState([""]);
-  const [prerequisites, setPrerequisites] = useState([""]);
+  const [benefits, setBenefits] = useState([{ title: "" }]);
+  const [prerequisites, setPrerequisites] = useState([{ title: "" }]);
   const [courseContentData, setCourseContentData] = useState([
     {
       videoUrl: "",
@@ -35,8 +36,10 @@ const CreateCourse = (props: Props) => {
       suggestions: "",
     },
   ]);
+
+  const handleSubmit = async () => {};
   return (
-    <div className="w-full min-h-screen">
+    <div className="w-full flex min-h-screen">
       <div className="w-[80%]">
         {active === 0 && (
           <CourseInformation
@@ -44,6 +47,25 @@ const CreateCourse = (props: Props) => {
             setCourseInfo={setCourseInfo}
             active={active}
             setActive={setActive}
+          />
+        )}
+        {active === 1 && (
+          <CourseData
+            benefits={benefits}
+            setBenefits={setBenefits}
+            prerequisites={prerequisites}
+            setPrerequisites={setPrerequisites}
+            active={active}
+            setActive={setActive}
+          />
+        )}
+        {active === 2 && (
+          <CourseContent
+            courseContentData={courseContentData}
+            setCourseContentData={setCourseContentData}
+            active={active}
+            setActive={setActive}
+            handleSubmit={handleSubmit}
           />
         )}
       </div>
