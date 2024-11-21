@@ -1,14 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CourseInformation from "./CourseInformation";
 import CourseOption from "./CourseOption";
 import CourseData from "./CourseData";
 import CourseContent from "./CourseContent";
 import CoursePreview from "./CoursePreview";
+import { useCreateCourseMutation } from "@/Redux/features/courses/coursesApi";
+import toast from "react-hot-toast";
+import { redirect } from "next/navigation";
 type Props = {};
 
 const CreateCourse = (props: Props) => {
+  const [createCourse, { isSuccess, error, isLoading }] =
+    useCreateCourseMutation();
   const [active, setActive] = useState(0);
   const [courseInfo, setCourseInfo] = useState({
     name: "",
@@ -37,6 +42,18 @@ const CreateCourse = (props: Props) => {
       suggestions: "",
     },
   ]);
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Course Created Successfully!");
+      redirect("/admin/all-courses");
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = error as any;
+        toast.error(errorMessage.data.message);
+      }
+    }
+  }, [isSuccess, error, isLoading]);
 
   const [courseData, setCourseData] = useState({});
 
@@ -71,6 +88,7 @@ const CreateCourse = (props: Props) => {
       price: courseInfo.price,
       estimatedPrice: courseInfo.estimatedPrice,
       thumbnail: courseInfo.thumbnail,
+      tags: courseInfo.tags,
       level: courseInfo.level,
       demoUrl: courseInfo.demoUrl,
       totalVideos: courseContentData.length,
@@ -82,8 +100,12 @@ const CreateCourse = (props: Props) => {
     setCourseData(data);
   };
 
-  const handleCourseCreate = (e: any) => {
+  const handleCourseCreate = async (e: any) => {
     const data = courseData;
+    console.log(data);
+    if (!isLoading) {
+      await createCourse(data);
+    }
   };
   return (
     <div className="w-full flex min-h-screen">

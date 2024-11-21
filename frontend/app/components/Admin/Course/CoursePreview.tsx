@@ -166,13 +166,13 @@ const CoursePreview = ({
       </div>
       <div className="w-full flex items-center justify-between">
         <div
-          className="w-full xl:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] roundde mt-0"
+          className="w-full xl:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] rounded cursor-pointer mt-0"
           onClick={() => prevButton()}
         >
           Prev
         </div>
         <div
-          className="w-full xl:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a] roundde mt-0"
+          className="w-full xl:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a]  cursor-pointer rounded mt-0"
           onClick={() => createCourse()}
         >
           Next
