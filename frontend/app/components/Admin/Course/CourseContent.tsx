@@ -1,9 +1,6 @@
 import { styles } from "@/app/style/style";
 import { useState } from "react";
-import {
-  AiOutlineDelete,
-  AiOutlinePlusCircle,
-} from "react-icons/ai";
+import { AiOutlineDelete, AiOutlinePlusCircle } from "react-icons/ai";
 import { BiSolidPencil } from "react-icons/bi";
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import { BsLink45Deg } from "react-icons/bs";
@@ -136,7 +133,6 @@ const CourseContent = ({
             >
               {showSectionInput && (
                 <>
-                  {" "}
                   <div className=" flex w-full items-center">
                     <input
                       type="text"
@@ -161,7 +157,6 @@ const CourseContent = ({
               <div className="flex w-full items-center justify-between my-8">
                 {isCollapsed[index] ? (
                   <>
-                    {" "}
                     {item.title ? (
                       <p className="font-Poppins dark:text-white text-black">
                         {index + 1}. {item.title}

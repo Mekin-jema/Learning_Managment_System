@@ -11,6 +11,7 @@ import {
   addReplyToReview,
   getAllCourse,
   deleteCourse,
+  generateVideoUrl,
 } from "../controllers/course.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 import { getCouresAnalytics } from "../controllers/analytics.controller";
@@ -52,6 +53,11 @@ router.get(
   isAuthenticated,
   authorizeRoles("admin"),
   getAllCourse
+);
+router.post(
+  "/get-vdo-CipherOTP",
+  // authorizeRoles("admin"),
+  generateVideoUrl
 );
 router.delete(
   "/delete-course/:id",
