@@ -116,9 +116,9 @@ const CourseInformation = ({
               type="number"
               name=""
               required
-              value={courseInfo.price}
+              value={courseInfo.estimatedPrice}
               onChange={(e) =>
-                setCourseInfo({ ...courseInfo, price: e.target.value })
+                setCourseInfo({ ...courseInfo, estimatedPrice: e.target.value })
               }
               id="price"
               placeholder="29 "
@@ -155,7 +155,7 @@ const CourseInformation = ({
               onChange={(e) =>
                 setCourseInfo({ ...courseInfo, level: e.target.value })
               }
-              id="price"
+              id="level"
               placeholder="intermidiate"
               className={`${styles.input}`}
             />
@@ -172,7 +172,7 @@ const CourseInformation = ({
               onChange={(e) =>
                 setCourseInfo({ ...courseInfo, demoUrl: e.target.value })
               }
-              id="price"
+              id="url"
               placeholder="https://www.google.com "
               className={`${styles.input}`}
             />

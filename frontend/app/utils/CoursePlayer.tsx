@@ -30,8 +30,8 @@ const CoursePlayer = ({ videoUrl, title }: Props) => {
           src={`https://player.vdocipher.com/v2/?otp=${videoData.otp}&playbackInfo=${videoData.playbackInfo}&player=Sl163LYDb4zXuPeL`}
           style={{
             border: 0,
-            height: "90%",
-            width: "100%",
+            height: "100%",
+            width: "90%",
             position: "absolute",
             top: 0,
             left: 0,
