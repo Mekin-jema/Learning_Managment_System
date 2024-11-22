@@ -48,6 +48,9 @@ export const editCourse = CatchAsyncError(
     try {
       const courseId = req.params.id;
       if (!mongoose.Types.ObjectId.isValid(courseId)) {
+        return next(new ErrorHandler(400, "Invalid Course ID"));
+      }
+      if (!mongoose.Types.ObjectId.isValid(courseId)) {
         return next(new ErrorHandler(400, "Content ID is not valid"));
       }
       const courseExist = await Course.findById(courseId);
@@ -445,12 +448,17 @@ export const deleteCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const courseId = req.params.id;
-      await redis.del(courseId);
+      console.log(courseId);
+
+      if (!mongoose.Types.ObjectId.isValid(courseId)) {
+        return next(new ErrorHandler(400, "Invalid Course ID"));
+      }
+      await redis.del(req.params.id);
       const course = await Course.findById(courseId);
       if (!course) {
         return next(new ErrorHandler(404, "Course not found"));
       }
-      await course.deleteOne({ courseId });
+      await course.deleteOne({ _id: courseId });
       res.status(200).json({
         success: true,
         message: "Course deleted successfully",

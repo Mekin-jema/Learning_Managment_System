@@ -1,13 +1,25 @@
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Modal } from "@mui/material";
 import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
 import { useTheme } from "next-themes";
-import { useGetAllCoursesQuery } from "@/Redux/features/courses/coursesApi";
+import {
+  useDeleteCourseMutation,
+  useGetAllCoursesQuery,
+} from "@/Redux/features/courses/coursesApi";
 import Loader from "../../Loader/Loader";
 import { format } from "timeago.js";
+import { styles } from "@/app/style/style";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 const AllCourses = () => {
   const { theme } = useTheme();
-  const { isSuccess, isLoading, data, error } = useGetAllCoursesQuery({});
+  const { isLoading, data } = useGetAllCoursesQuery(
+    {},
+    { refetchOnMountOrArgChange: true }
+  );
+  const [deleteCourse, { isSuccess, error }] = useDeleteCourseMutation({});
+  const [courseId, setCourseId] = useState("");
+  const [open, setOpen] = useState(false);
   console.log(data);
 
   const columns = [
@@ -19,7 +31,7 @@ const AllCourses = () => {
       field: " ",
       headerName: "Edit",
       flex: 0.2,
-      renderCell: () => (
+      renderCell: (params: any) => (
         <Button>
           <AiOutlineEdit className="dark:text-white text-black" size={20} />
         </Button>
@@ -29,8 +41,13 @@ const AllCourses = () => {
       field: "",
       headerName: "Delete",
       flex: 0.2,
-      renderCell: () => (
-        <Button>
+      renderCell: (params: any) => (
+        <Button
+          onClick={() => {
+            setOpen(!open);
+            setCourseId(params.row.id);
+          }}
+        >
           <AiOutlineDelete className="dark:text-white text-black" size={20} />
         </Button>
       ),
@@ -49,7 +66,22 @@ const AllCourses = () => {
         });
       });
   }
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Course Deleted Successfully");
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = error as any;
+        toast.error(errorMessage.data.message);
+      }
+    }
+  }, [isSuccess, error]);
 
+  const handleDelete = async () => {
+    await deleteCourse(courseId);
+    setOpen(!open);
+  };
   return (
     <div className="mt-[120px]">
       {isLoading ? (
@@ -111,6 +143,34 @@ const AllCourses = () => {
           >
             <DataGrid rows={rows} columns={columns} checkboxSelection />
           </Box>
+          {open && (
+            <Modal
+              open={open}
+              onClose={() => setOpen(!open)}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box className="absolute top-[50px] left-[50%] -translate-x-1/2 ">
+                <h1 className={`${styles.title}`}>
+                  Do you want to delte this course?
+                </h1>
+                <div className="flex w-full item-center justify-between mb-6">
+                  <div
+                    className={`${styles.button} !w-[120px]' h-[30px] bg-[#57c7a3]`}
+                    onClick={() => setOpen(!open)}
+                  >
+                    Cancel
+                  </div>
+                  <div
+                    className={`${styles.button} !w-[120px]' h-[30px] bg-[#d33] `}
+                    onClick={handleDelete}
+                  >
+                    Delete
+                  </div>
+                </div>
+              </Box>
+            </Modal>
+          )}
         </Box>
       )}
     </div>

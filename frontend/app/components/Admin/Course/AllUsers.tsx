@@ -1,17 +1,31 @@
 import { DataGrid } from "@mui/x-data-grid";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Modal } from "@mui/material";
 import { AiOutlineDelete, AiOutlineEdit, AiOutlineMail } from "react-icons/ai";
 import { useTheme } from "next-themes";
 import Loader from "../../Loader/Loader";
 import { format } from "timeago.js";
-import { useGetAllUsersQuery } from "@/Redux/features/user/userApi";
+import {
+  useDeleteUserMutation,
+  useGetAllUsersQuery,
+} from "@/Redux/features/user/userApi";
+import { styles } from "@/app/style/style";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 type props = {
   isTeam: boolean;
 };
 const AllUsers = ({ isTeam }: props) => {
   const { theme } = useTheme();
-  const { isSuccess, isLoading, data, error } = useGetAllUsersQuery({});
+  const { isLoading, data } = useGetAllUsersQuery(
+    {},
+    { refetchOnMountOrArgChange: true }
+  );
+  const [userId, setUserId] = useState();
+  const [deleteUser, { isSuccess, error }] = useDeleteUserMutation();
+  const [open, setOpen] = useState(false);
+
+  const [active, setActive] = useState(false);
   console.log(data);
 
   const columns = [
@@ -27,7 +41,12 @@ const AllUsers = ({ isTeam }: props) => {
       headerName: "Delete",
       flex: 0.2,
       renderCell: (params: any) => (
-        <Button>
+        <Button
+          onClick={() => {
+            setOpen(!open);
+            setUserId(params.row.id);
+          }}
+        >
           <AiOutlineDelete className="dark:text-white text-black" size={20} />
         </Button>
       ),
@@ -81,13 +100,36 @@ const AllUsers = ({ isTeam }: props) => {
         });
     }
   }
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("User Deleted Successfully");
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = error as any;
+        toast.error(errorMessage.data.message);
+      }
+    }
+  }, [isSuccess, error]);
 
+  const handleDelete = async () => {
+    await deleteUser(userId);
+    setOpen(!open);
+  };
   return (
     <div className="mt-[120px]">
       {isLoading ? (
         <Loader />
       ) : (
         <Box m="20px">
+          <div className="w-full flex justify-end ">
+            <div
+              className={`${styles.button} !w-[220px]`}
+              onClick={() => setActive(!active)}
+            >
+              Add New Member
+            </div>
+          </div>
           <Box
             m="40px 0 0 0"
             height="80vh"
@@ -143,6 +185,34 @@ const AllUsers = ({ isTeam }: props) => {
           >
             <DataGrid rows={rows} columns={columns} checkboxSelection />
           </Box>
+          {open && (
+            <Modal
+              open={open}
+              onClose={() => setOpen(!open)}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box className="absolute top-[50px] left-[50%] -translate-x-1/2 ">
+                <h1 className={`${styles.title}`}>
+                  Are you sure do you want to delte this user?
+                </h1>
+                <div className="flex w-full item-center justify-between mb-6">
+                  <div
+                    className={`${styles.button}!w-[120px]' h-[30px] bg-[#57c7a3]`}
+                    onClick={() => setOpen(!open)}
+                  >
+                    Cancel
+                  </div>
+                  <div
+                    className={`${styles.button}!w-[120px]' h-[30px] bg-[#d33] `}
+                    onClick={handleDelete}
+                  >
+                    Delete
+                  </div>
+                </div>
+              </Box>
+            </Modal>
+          )}
         </Box>
       )}
     </div>
