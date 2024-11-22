@@ -236,34 +236,7 @@ const Sidebar = () => {
               setSelected={setSelected}
               icon={<Web />}
             />
-            <Typography
-              variant="h5"
-              sx={{ m: "15px 0 5px 25px" }}
-              className="!text-[18px] text-black dark:text-[#ffffffc1] capitalize !font-[400] "
-            >
-              {!isCollapsed && "Customization"}
-            </Typography>
-            <Item
-              title="Hero "
-              to="/admin/hero"
-              selected={selected}
-              setSelected={setSelected}
-              icon={<Web />}
-            />
-            <Typography
-              variant="h5"
-              sx={{ m: "15px 0 5px 25px" }}
-              className="!text-[18px] text-black dark:text-[#ffffffc1] capitalize !font-[400] "
-            >
-              {!isCollapsed && "Customization"}
-            </Typography>
-            <Item
-              title="Hero "
-              to="/admin/hero"
-              selected={selected}
-              setSelected={setSelected}
-              icon={<Web />}
-            />
+
             <Item
               title="FAQ"
               to="/admin/faq"
@@ -287,7 +260,7 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Manage Team"
-              to="/admin/categories"
+              to="/admin/team"
               selected={selected}
               setSelected={setSelected}
               icon={<PeopleOutLined />}

@@ -5,8 +5,11 @@ import { useTheme } from "next-themes";
 import Loader from "../../Loader/Loader";
 import { format } from "timeago.js";
 import { useGetAllUsersQuery } from "@/Redux/features/user/userApi";
-import { useParams } from "next/navigation";
-const AllUsers = () => {
+
+type props = {
+  isTeam: boolean;
+};
+const AllUsers = ({ isTeam }: props) => {
   const { theme } = useTheme();
   const { isSuccess, isLoading, data, error } = useGetAllUsersQuery({});
   console.log(data);
@@ -50,9 +53,10 @@ const AllUsers = () => {
   ];
   const rows: any = [];
 
-  {
-    data &&
-      data.users.forEach((item: any, index: number) => {
+  if (isTeam) {
+    const newData = data?.users.filter((item: any) => item.role === "admin");
+    newData &&
+      newData.forEach((item: any, index: number) => {
         rows.push({
           id: item._id,
           name: item.name,
@@ -62,6 +66,20 @@ const AllUsers = () => {
           created_at: format(item.createdAt),
         });
       });
+  } else {
+    {
+      data &&
+        data.users.forEach((item: any, index: number) => {
+          rows.push({
+            id: item._id,
+            name: item.name,
+            email: item.email,
+            role: item.role,
+            courses: item.courses.length,
+            created_at: format(item.createdAt),
+          });
+        });
+    }
   }
 
   return (
