@@ -1,11 +1,11 @@
 import { DataGrid } from "@mui/x-data-grid";
 import { Box, Button } from "@mui/material";
-import { AiOutlineDelete, AiOutlineEdit } from "react-icons/ai";
+import { AiOutlineDelete, AiOutlineEdit, AiOutlineMail } from "react-icons/ai";
 import { useTheme } from "next-themes";
 import Loader from "../../Loader/Loader";
 import { format } from "timeago.js";
 import { useGetAllUsersQuery } from "@/Redux/features/user/userApi";
-import Email from "next-auth/providers/email";
+import { useParams } from "next/navigation";
 const AllUsers = () => {
   const { theme } = useTheme();
   const { isSuccess, isLoading, data, error } = useGetAllUsersQuery({});
@@ -13,19 +13,38 @@ const AllUsers = () => {
 
   const columns = [
     { field: "name", headerName: "Name", flex: 0.5 },
-    { field: "email", headerName: "Email", flex: 1 },
-    { field: "role", headerName: "Role", flex: 0.5 },
-    { field: "courses", headerName: "Purchased Courses", flex: 0.5 },
+    { field: "id", headerName: "ID", flex: 0.5 },
+    { field: "email", headerName: "Email", flex: 0.5 },
+    { field: "role", headerName: "Role", flex: 0.3 },
+    { field: "courses", headerName: "Purchased Courses", flex: 0.2 },
     { field: "created_at", headerName: "Created At", flex: 0.5 },
 
     {
       field: "",
       headerName: "Delete",
       flex: 0.2,
-      renderCell: () => (
+      renderCell: (params: any) => (
         <Button>
           <AiOutlineDelete className="dark:text-white text-black" size={20} />
         </Button>
+      ),
+    },
+    {
+      field: " ",
+      headerName: "Email",
+      flex: 0.2,
+      renderCell: (params: any) => (
+        <a
+          href={`mailto:${params.row.email}`}
+          style={{
+            textDecoration: "none", // Removes underline
+            color: "inherit", // Adopts parent text color
+            listStyleType: "none", // Explicitly removes bullet
+            display: "inline-block", // Prevents list-item behavior
+          }}
+        >
+          <AiOutlineMail className="dark:text-white text-black" size={20} />
+        </a>
       ),
     },
   ];
