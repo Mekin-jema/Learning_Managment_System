@@ -16,7 +16,6 @@ import {
 } from "../utils/jwt";
 import { getAllUsersService, getUserById } from "../services/user.service";
 import { v2 as cloudinary } from "cloudinary";
-import { newOrder } from "../services/order.service";
 
 dotenv.config();
 interface IRegistirationBody {
@@ -440,7 +439,12 @@ export const updateProfile = CatchAsyncError(
 export const getAllUsers = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      getAllUsersService(res);
+      const users = await getAllUsersService(res);
+      res.status(200).json({
+        success: true,
+        users,
+        message: "All users",
+      });
     } catch (error: any) {
       return next(new ErrorHandler(400, error.message));
     }

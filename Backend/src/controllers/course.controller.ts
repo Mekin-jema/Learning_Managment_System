@@ -147,7 +147,8 @@ export const getAllCourses = CatchAsyncError(
 
       res.status(200).json({
         success: true,
-        courses,
+        courses: courses,
+        message: "Courses fetched successfully",
       });
     } catch (error: any) {
       console.error("Error in getAllCourses:", error);

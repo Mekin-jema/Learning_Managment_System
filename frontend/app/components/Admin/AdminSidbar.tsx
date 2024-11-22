@@ -189,7 +189,7 @@ const Sidebar = () => {
             </Typography>
             <Item
               title="Users "
-              to="/admin/users"
+              to="/admin/all-users"
               selected={selected}
               setSelected={setSelected}
               icon={<Groups />}
@@ -217,7 +217,7 @@ const Sidebar = () => {
             />
             <Item
               title="Live Coures "
-              to="/admin/courses"
+              to="/admin/all-courses"
               selected={selected}
               setSelected={setSelected}
               icon={<OndemandVideo />}

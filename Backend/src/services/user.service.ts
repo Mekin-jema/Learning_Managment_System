@@ -16,6 +16,7 @@ export const getUserById = async (id: string) => {
 //get user by emails
 //get all users
 
-export const getAllUsersService = async (req: Response) => {
+export const getAllUsersService = async (res: Response) => {
   const users = await User.find().sort({ createdAat: -1 });
+  return users;
 };

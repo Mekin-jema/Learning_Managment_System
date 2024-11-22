@@ -68,7 +68,7 @@ router.get(
   updateAccessToken,
   isAuthenticated,
   authorizeRoles("admin"),
-  getAllCourse
+  getAllCourses
 );
 router.post(
   "/get-vdo-CipherOTP",
