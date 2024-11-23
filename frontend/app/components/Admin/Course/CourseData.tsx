@@ -6,8 +6,8 @@ import toast from "react-hot-toast";
 type Props = {
   benefits: { title: string }[];
   setBenefits: (benefits: { title: string }[]) => void;
-  prerequisites: { title: string }[];
-  setPrerequisites: (prerequisites: { title: string }[]) => void;
+  preRequisites: { title: string }[];
+  setPrerequisites: (preRequisites: { title: string }[]) => void;
   active: number;
   setActive: (active: number) => void;
 };
@@ -15,7 +15,7 @@ type Props = {
 const CourseData = ({
   benefits,
   setBenefits,
-  prerequisites,
+  preRequisites,
   setPrerequisites,
   active,
   setActive,
@@ -30,27 +30,39 @@ const CourseData = ({
     setBenefits([...benefits, { title: "" }]);
   };
   const handlePrerequisiteChange = (index: number, value: any) => {
-    const updatedPrerequisites = [...prerequisites];
+    const updatedPrerequisites = [...preRequisites];
     updatedPrerequisites[index].title = value;
     setPrerequisites(updatedPrerequisites);
   };
 
   const handleAddPrerequisite = () => {
-    setPrerequisites([...prerequisites, { title: "" }]);
+    setPrerequisites([...preRequisites, { title: "" }]);
   };
 
   const prevButton = () => {
     setActive(active - 1);
   };
 
+  /**
+   * Handles the options for the course data form.
+   *
+   * This function checks if all the benefit and prerequisite fields are filled.
+   * If all fields are filled, it increments the active step.
+   * Otherwise, it displays an error message prompting the user to fill all fields.
+   *
+   * @remarks
+   * Added checking to ensure all input fields need to be filled.
+   */
   const handleOptions = () => {
-    if (
-      benefits[benefits.length - 1]?.title !== "" &&
-      prerequisites[prerequisites.length - 1]?.title !== ""
-    ) {
+    const allBenefitsFilled = benefits.every((benefit) => benefit.title !== "");
+    const allPrerequisitesFilled = preRequisites.every(
+      (prerequisite) => prerequisite.title !== ""
+    );
+
+    if (allBenefitsFilled && allPrerequisitesFilled) {
       setActive(active + 1);
     } else {
-      toast.error("Please fill the fiels for go to next!");
+      toast.error("Please fill all the fields to go to the next step!");
     }
   };
 
@@ -79,10 +91,10 @@ const CourseData = ({
       </div>
       <div>
         <label htmlFor="email" className={`${styles.label}`}>
-          What are the prerequisites for students in this course?
+          What are the preRequisites for students in this course?
         </label>
         <br />
-        {prerequisites.map((prerequisite: any, index: number) => (
+        {preRequisites.map((prerequisite: any, index: number) => (
           <input
             type="text"
             key={index}

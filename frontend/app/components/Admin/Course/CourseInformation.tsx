@@ -8,6 +8,38 @@ type Props = {
   setActive: (active: number) => void;
 };
 
+/**
+ * Component for displaying and editing course information.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Object} props.courseInfo - The current course information.
+ * @param {Function} props.setCourseInfo - Function to update the course information.
+ * @param {number} props.active - The current active step in the form.
+ * @param {Function} props.setActive - Function to update the active step.
+ *
+ * @returns {JSX.Element} The rendered component.
+ *
+ * @function handleSubmit
+ * Handles the form submission event, prevents the default form submission behavior,
+ * and advances to the next step in the form.
+ *
+ * @function handleFileChange
+ * Handles the file input change event, reads the selected file as a data URL,
+ * and updates the course information state with the file's data URL.
+ *
+ * @function handleDragOver
+ * Handles the drag over event, prevents the default behavior to allow dropping,
+ * and sets the dragging state to true.
+ *
+ * @function handleDragLeave
+ * Handles the drag leave event, prevents the default behavior,
+ * and sets the dragging state to false.
+ *
+ * @function handleDrop
+ * Handles the drop event, prevents the default behavior, sets the dragging state to false,
+ * reads the dropped file as a data URL, and updates the course information state with the file's data URL.
+ */
 const CourseInformation = ({
   courseInfo,
   setCourseInfo,
@@ -20,6 +52,19 @@ const CourseInformation = ({
     setActive(active + 1);
   };
 
+  /**
+   * Handles the file input change event, reads the selected file as a data URL,
+   * and updates the course information state with the file's data URL.
+   *
+   * @param e - The file input change event.
+   *
+   * The `FileReader` object is used to read the contents of the file.
+   * The `onload` event is triggered when the read operation is successfully completed.
+   * The `readyState` property of `FileReader` can have the following values:
+   * - 0 (EMPTY): No data has been loaded yet.
+   * - 1 (LOADING): Data is currently being loaded.
+   * - 2 (DONE): The entire read request has been completed.
+   */
   const handleFileChange = (e: any) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -42,9 +87,20 @@ const CourseInformation = ({
     e.preventDefault();
     setDragging(false);
   };
+
   const handleDrop = (e: any) => {
     e.preventDefault();
     setDragging(false);
+    /**
+     * Handles the drop event for a file input, preventing the default behavior,
+     * stopping the dragging state, and reading the dropped file as a data URL.
+     *
+     * @param e - The drop event.
+     *
+     * The function does not use `readyState` because it leverages the `onload` event
+     * of the FileReader, which ensures that the file reading process is complete
+     * before updating the state with the file's data URL.
+     */
 
     const file = e.dataTransfer.files?.[0];
     if (file) {
@@ -134,6 +190,7 @@ const CourseInformation = ({
             type="text"
             name=""
             required
+            value={courseInfo.tags}
             onChange={(e) =>
               setCourseInfo({ ...courseInfo, tags: e.target.value })
             }
@@ -189,8 +246,8 @@ const CourseInformation = ({
           />
           <label
             htmlFor="file"
-            className={` w-full min-h-[10vh] dark:border-white border-[#00000026]p-3 border flex items-center 
-          ${dragging ? "bg-blu-500" : "bg-transparent"} `}
+            className={` w-full min-h-[10vh] dark:border-white border-[#00000026] p-3 border flex items-center 
+          ${dragging ? "bg-blue-500" : "bg-transparent"} `}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}

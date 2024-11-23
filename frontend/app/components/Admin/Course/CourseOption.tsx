@@ -9,9 +9,9 @@ type Props = {
 const CourseOption = ({ active, setActive }: Props) => {
   const options = [
     "Course Information",
-    "Course Optins",
-    "Course COntent",
-    "Course preview",
+    "Course Options",
+    "Course Content",
+    "Course Preview",
   ];
   return (
     <div className="">

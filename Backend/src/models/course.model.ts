@@ -40,7 +40,7 @@ interface ICourse extends Document {
   level: string; // beginner, intermediate, advanced
   demoUrl: string;
   benefits: { title: string }[];
-  preRequesites: { title: string }[];
+  preRequisites: { title: string }[];
   reviews: IReview[];
   courseData: ICourseData[];
   ratings?: number;
@@ -125,7 +125,7 @@ const courseSchema: Schema<ICourse> = new mongoose.Schema(
         title: String,
       },
     ],
-    preRequesites: [
+    preRequisites: [
       {
         title: String,
       },

@@ -134,7 +134,8 @@ const CoursePreview = ({
             What you will learn from this course
           </h1>
         </div>
-        {courseData?.benefit?.map((item: any, index: number) => (
+
+        {courseData?.benefits?.map((item: any, index: number) => (
           <div className="w-full flex md:items-center py-2 " key={index}>
             <div className="w-[15px] mr-1">
               <IoCheckmarkDoneOutline size={20} />
@@ -147,7 +148,8 @@ const CoursePreview = ({
         <h1 className=" text-[25px] font-Poppins font-[600]">
           What are the Prerequiste for startring this course
         </h1>
-        {courseData?.prerequisites?.map((item: any, index: number) => (
+
+        {courseData.preRequisites?.map((item: any, index: number) => (
           <div className=" w-full flex md:items-center py-2">
             <div className="w-[15px] mr-1">
               <IoCheckmarkDoneOutline size={20} />
@@ -155,7 +157,6 @@ const CoursePreview = ({
             <p className="pl-2">{item.title}</p>
           </div>
         ))}
-
         {/* Course descriptin  */}
         <div className="w-full">
           <h1 className=" text-[25px]">Course Details</h1>

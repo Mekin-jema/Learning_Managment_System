@@ -11,6 +11,7 @@ import { format } from "timeago.js";
 import { styles } from "@/app/style/style";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
 const AllCourses = () => {
   const { theme } = useTheme();
   const { isLoading, data } = useGetAllCoursesQuery(
@@ -32,9 +33,9 @@ const AllCourses = () => {
       headerName: "Edit",
       flex: 0.2,
       renderCell: (params: any) => (
-        <Button>
+        <Link href={`/admin/edit-course/${params.row.id}`}>
           <AiOutlineEdit className="dark:text-white text-black" size={20} />
-        </Button>
+        </Link>
       ),
     },
     {
