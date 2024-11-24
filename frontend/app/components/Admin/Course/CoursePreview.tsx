@@ -4,16 +4,17 @@ import { styles } from "@/app/style/style";
 import CourseData from "./CourseData";
 import { motion } from "framer-motion";
 import Ratings from "../../../utils/Ratings";
-import { IoMdCheckmark } from "react-icons/io";
 import { IoCheckmarkDoneOutline } from "react-icons/io5";
 type Props = {
   active: number;
   setActive: (active: number) => void;
   courseData: any;
-  handleCourseCreate: any;
+  isEdit: boolean;
+  handleCourseCreate?: any;
 };
 
 const CoursePreview = ({
+  isEdit,
   active,
   setActive,
   courseData,
@@ -176,7 +177,7 @@ const CoursePreview = ({
           className="w-full xl:w-[180px] flex items-center justify-center h-[40px] bg-[#37a39a]  cursor-pointer rounded mt-0"
           onClick={() => createCourse()}
         >
-          Next
+          {isEdit && isEdit ? "Update Course" : "Create"}
         </div>
       </div>
     </div>

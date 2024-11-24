@@ -3,15 +3,15 @@ import {
   editCourse,
   getSingleCourse,
   uploadCourse,
-  getAllCourses,
+  getRestrictedCourses,
   getCoursesByUser,
   addQuestion,
   addAnswer,
   addReview,
   addReplyToReview,
-  getAllCourse,
   deleteCourse,
   generateVideoUrl,
+  getAdminCourses,
 } from "../controllers/course.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
 import { getCouresAnalytics } from "../controllers/analytics.controller";
@@ -40,7 +40,12 @@ router.get(
   isAuthenticated,
   getSingleCourse
 );
-router.get("/get-course", updateAccessToken, isAuthenticated, getAllCourses);
+router.get(
+  "/get-user-course",
+  updateAccessToken,
+  isAuthenticated,
+  getRestrictedCourses
+);
 router.get(
   "/get-user-courses/:id",
   updateAccessToken,
@@ -64,11 +69,11 @@ router.post(
   addReplyToReview
 );
 router.get(
-  "/get-all-courses",
+  "/get-admin-courses",
   updateAccessToken,
   isAuthenticated,
   authorizeRoles("admin"),
-  getAllCourses
+  getAdminCourses
 );
 router.post(
   "/get-vdo-CipherOTP",

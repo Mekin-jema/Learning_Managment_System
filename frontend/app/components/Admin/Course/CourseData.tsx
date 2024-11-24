@@ -21,8 +21,9 @@ const CourseData = ({
   setActive,
 }: Props) => {
   const handleBenefitChange = (index: number, value: any) => {
-    const updatedBenefits = [...benefits];
-    updatedBenefits[index].title = value;
+    const updatedBenefits = benefits.map((benefit, i) =>
+      i === index ? { ...benefit, title: value } : benefit
+    );
     setBenefits(updatedBenefits);
   };
 
@@ -30,8 +31,9 @@ const CourseData = ({
     setBenefits([...benefits, { title: "" }]);
   };
   const handlePrerequisiteChange = (index: number, value: any) => {
-    const updatedPrerequisites = [...preRequisites];
-    updatedPrerequisites[index].title = value;
+    const updatedPrerequisites = preRequisites.map((prerequisite, i) =>
+      i === index ? { ...prerequisite, title: value } : prerequisite
+    );
     setPrerequisites(updatedPrerequisites);
   };
 
@@ -65,6 +67,8 @@ const CourseData = ({
       toast.error("Please fill all the fields to go to the next step!");
     }
   };
+  console.log(benefits);
+  console.log(preRequisites);
 
   return (
     <div className="w-[88%] m-auto mt-24 block">

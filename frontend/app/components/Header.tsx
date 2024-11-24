@@ -39,7 +39,7 @@ const Header = ({
   const [openSidebar, setOpenSidebar] = useState(false);
 
   const { user } = useSelector((state: any) => state.auth);
-  console.log("user", user);
+
   const { data } = useSession();
   const [socialAuth, { isSuccess, isError, error }] = useSocialAuthMutation();
   const [logout, setLogout] = useState(false);
@@ -66,8 +66,6 @@ const Header = ({
     }
   }, [data, user]);
 
-  // console.log(user);
-  console.log(data);
   useEffect(() => {
     if (typeof window !== "undefined") {
       const handleScroll = () => {

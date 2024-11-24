@@ -26,7 +26,7 @@ interface ICourseData extends Document {
   videoSection: string;
   videoLength: number;
   videoPlayer: string;
-  link: ILink[];
+  links: ILink[];
   suggestion: string;
   questions: IComment[];
 }
@@ -74,7 +74,7 @@ const courseDataSchema: Schema<ICourseData> = new mongoose.Schema({
   videoSection: String,
   videoLength: Number,
   videoPlayer: String,
-  link: [linkSchema],
+  links: [linkSchema],
   suggestion: String,
   questions: [commentSchema],
 });

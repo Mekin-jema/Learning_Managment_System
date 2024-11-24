@@ -47,17 +47,17 @@ export const editCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const courseId = req.params.id;
+      console.log(courseId);
       if (!mongoose.Types.ObjectId.isValid(courseId)) {
         return next(new ErrorHandler(400, "Invalid Course ID"));
       }
-      if (!mongoose.Types.ObjectId.isValid(courseId)) {
-        return next(new ErrorHandler(400, "Content ID is not valid"));
-      }
+
       const courseExist = await Course.findById(courseId);
       if (!courseExist) {
         return next(new ErrorHandler(404, "Course is not found"));
       }
       const data = req.body;
+      console.log(data);
       const { thumbnail } = data;
 
       if (thumbnail && thumbnail.public_id) {
@@ -130,7 +130,7 @@ export const getSingleCourse = CatchAsyncError(
 );
 
 //get all courses without purchase
-export const getAllCourses = CatchAsyncError(
+export const getRestrictedCourses = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       // const isCacheExist = await redis.get("allCourses");
@@ -433,7 +433,7 @@ export const addReplyToReview = CatchAsyncError(
   }
 );
 //get all courses ---admin only
-export const getAllCourse = CatchAsyncError(
+export const getAdminCourses = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       getAllCoursesService(res);

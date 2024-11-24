@@ -4,10 +4,10 @@ import AdminSidbar from "@/app/components/Admin/AdminSidbar";
 import Heading from "../../../utils/Heading";
 import DashboeardHero from "@/app/components/Admin/sidebar/DashboeardHero";
 import EditCourse from "@/app/components/Admin/edit-course/EditCourse";
-// import { useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 
-const page = ({ params }: any) => {
-  // const params = useParams();
+const page = () => {
+  const params = useParams();
   const id = params?.id;
   return (
     <div>

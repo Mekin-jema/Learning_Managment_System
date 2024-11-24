@@ -7,30 +7,24 @@ import CourseData from "../Course/CourseData";
 import CourseContent from "../Course/CourseContent";
 import CoursePreview from "../Course/CoursePreview";
 import {
-  useCreateCourseMutation,
   useEditCoursesMutation,
   useGetAllCoursesQuery,
 } from "@/Redux/features/courses/coursesApi";
 import toast from "react-hot-toast";
 import { redirect } from "next/navigation";
 type Props = {
-  id: string;
+  id: any;
 };
 
 const EditCourse = ({ id }: Props) => {
-  console.log(id);
-
   const { isLoading, data, refetch } = useGetAllCoursesQuery(
     {},
     { refetchOnMountOrArgChange: true }
   );
+  const [editCourse, { isSuccess, error }] = useEditCoursesMutation();
   const courseToBeEditted = data?.courses.find(
     (course: any) => course._id === id
   );
-  console.log(courseToBeEditted);
-
-  //   const [EditCourse, { isSuccess: editSuccess, error: editError }] =
-  //     useEditCoursesMutation();
   const [active, setActive] = useState(0);
   useEffect(() => {
     if (courseToBeEditted) {
@@ -77,18 +71,19 @@ const EditCourse = ({ id }: Props) => {
       suggestions: "",
     },
   ]);
-  //   useEffect(() => {
-  //     if (isSuccess) {
-  //       toast.success("Course Created Successfully!");
-  //       redirect("/admin/all-courses");
-  //     }
-  //     if (error) {
-  //       if ("data" in error) {
-  //         const errorMessage = error as any;
-  //         toast.error(errorMessage.data.message);
-  //       }
-  //     }
-  //   }, [isSuccess, error, isLoading]);
+  useEffect(() => {
+    if (isSuccess) {
+      refetch();
+      toast.success("Course Updated Successfully!");
+      redirect("/admin/all-courses");
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = error as any;
+        toast.error(errorMessage.data.message);
+      }
+    }
+  }, [isSuccess, error, isLoading]);
 
   const [courseData, setCourseData] = useState({});
 
@@ -117,7 +112,7 @@ const EditCourse = ({ id }: Props) => {
       })
     );
     // prepare data object
-    const data = {
+    const newData = {
       name: courseInfo.name,
       description: courseInfo.description,
       price: courseInfo.price,
@@ -131,11 +126,16 @@ const EditCourse = ({ id }: Props) => {
       preRequisites: formattedPrerequisite,
       CourseContent: formattedCourseContentData,
     };
-    // console.log(data);
-    setCourseData(data);
+
+    setCourseData(newData);
   };
 
-  const handleCourseCreate = async (e: any) => {};
+  const handleCourseCreate = async () => {
+    handleSubmit();
+    console.log(courseData);
+    await editCourse({ id, courseData });
+  };
+
   return (
     <div className="w-full flex min-h-screen">
       <div className="w-[80%]">
@@ -172,6 +172,7 @@ const EditCourse = ({ id }: Props) => {
             active={active}
             setActive={setActive}
             handleCourseCreate={handleCourseCreate}
+            isEdit={true}
           />
         )}
       </div>

@@ -9,7 +9,7 @@ export const getAllCoursesService = async (res: Response) => {
   const courses = await Course.find().sort({ createdAt: -1 });
   res.status(201).json({
     success: true,
-    data: courses,
+    courses,
   });
   return courses;
 };

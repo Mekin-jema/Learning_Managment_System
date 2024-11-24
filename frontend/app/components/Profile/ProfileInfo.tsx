@@ -32,7 +32,7 @@ const ProfileInfo = ({ avatar, user }: Props) => {
     fileReader.onloadend = () => {
       if (fileReader.readyState === 2) {
         const avatar = fileReader.result;
-        console.log(avatar);
+
         updateAvatar(avatar);
       }
     };

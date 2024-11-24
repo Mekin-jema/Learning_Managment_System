@@ -7,6 +7,7 @@ import { format } from "timeago.js";
 import {
   useDeleteUserMutation,
   useGetAllUsersQuery,
+  useUpdateUserRoleMutation,
 } from "@/Redux/features/user/userApi";
 import { styles } from "@/app/style/style";
 import { useEffect, useState } from "react";
@@ -17,16 +18,40 @@ type props = {
 };
 const AllUsers = ({ isTeam }: props) => {
   const { theme } = useTheme();
-  const { isLoading, data } = useGetAllUsersQuery(
-    {},
-    { refetchOnMountOrArgChange: true }
-  );
+  const {
+    isLoading,
+    data,
+    refetch,
+    isSuccess: success,
+    error: getUserError,
+  } = useGetAllUsersQuery({}, { refetchOnMountOrArgChange: true });
   const [userId, setUserId] = useState();
   const [deleteUser, { isSuccess, error }] = useDeleteUserMutation();
+  const [updateUserRole, { isSuccess: updateSuccess }] =
+    useUpdateUserRoleMutation();
   const [open, setOpen] = useState(false);
 
   const [active, setActive] = useState(false);
-  console.log(data);
+
+  useEffect(() => {
+    if (success) {
+      refetch();
+    }
+    if (isSuccess) {
+      refetch();
+      toast.success("User Deleted Successfully");
+    }
+    if (updateSuccess) {
+      refetch();
+      toast.success("User Role Updated Successfully");
+    }
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = error as any;
+        toast.error(errorMessage.data.message);
+      }
+    }
+  }, [isSuccess, error, getUserError, updateSuccess]);
 
   const columns = [
     { field: "name", headerName: "Name", flex: 0.5 },
@@ -116,15 +141,23 @@ const AllUsers = ({ isTeam }: props) => {
     await deleteUser(userId);
     setOpen(!open);
   };
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setActive(!active);
+    const email = e.target[0].value;
+    const role = e.target[1].value;
+    // console.log(email, role);
+    await updateUserRole({ email, role });
+  };
   return (
     <div className="mt-[120px]">
       {isLoading ? (
         <Loader />
       ) : (
         <Box m="20px">
-          <div className="w-full flex justify-end ">
+          <div className=" flex justify-end  ">
             <div
-              className={`${styles.button} !w-[220px]`}
+              className={`${styles.button} !w-[220px] !cursor-pointer`}
               onClick={() => setActive(!active)}
             >
               Add New Member
@@ -210,6 +243,52 @@ const AllUsers = ({ isTeam }: props) => {
                     Delete
                   </div>
                 </div>
+              </Box>
+            </Modal>
+          )}
+          {active && (
+            <Modal
+              open={active}
+              onClose={() => setActive(!active)}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box
+                className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 p-4"
+                sx={{
+                  backgroundColor: theme === "dark" ? "#1A1B41" : "#FFFFFF",
+                  boxShadow: 24,
+                  borderRadius: 2,
+                  width: 400,
+                }}
+              >
+                <h2 className={`${styles.title} mb-4`}>Add New Member</h2>
+                <form onSubmit={handleSubmit}>
+                  <input
+                    type="email"
+                    className={`${styles.input} mb-4`}
+                    placeholder="Email"
+                    required
+                  />
+                  <select
+                    className={`${styles.input} mb-4`}
+                    name="role"
+                    required
+                  >
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                  <Button
+                    type="submit"
+                    className={`${styles.button} mt-4`}
+                    sx={{
+                      backgroundColor: theme === "dark" ? "#6C63FF" : "#3E4396",
+                      color: "#FFFFFF",
+                    }}
+                  >
+                    Submit
+                  </Button>
+                </form>
               </Box>
             </Modal>
           )}

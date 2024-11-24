@@ -55,7 +55,7 @@ const SignUp = ({ setRoute }: Props) => {
     //onSubmit function
     onSubmit: async ({ email, password, name }) => {
       const data = { email, password, name };
-      console.log(data);
+
       await register(data); //calling the register mutation
 
       // setRoute("Verification");

@@ -14,14 +14,13 @@ import toast from "react-hot-toast";
 import Link from "next/link";
 const AllCourses = () => {
   const { theme } = useTheme();
-  const { isLoading, data } = useGetAllCoursesQuery(
+  const { isLoading, data, refetch } = useGetAllCoursesQuery(
     {},
     { refetchOnMountOrArgChange: true }
   );
   const [deleteCourse, { isSuccess, error }] = useDeleteCourseMutation({});
   const [courseId, setCourseId] = useState("");
   const [open, setOpen] = useState(false);
-  console.log(data);
 
   const columns = [
     { field: "id", headerName: "ID", flex: 0.5 },
@@ -69,6 +68,7 @@ const AllCourses = () => {
   }
   useEffect(() => {
     if (isSuccess) {
+      refetch();
       toast.success("Course Deleted Successfully");
     }
     if (error) {

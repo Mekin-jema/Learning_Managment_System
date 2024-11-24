@@ -98,17 +98,17 @@ const CreateCourse = (props: Props) => {
       demoUrl: courseInfo.demoUrl,
       totalVideos: courseContentData.length,
       benefits: formattedBenefits,
-      preRequesites: formattedPrerequisite,
+      preRequisites: formattedPrerequisite,
       courseData: formattedCourseContentData,
       // reviews: courseInfo.reviews,
     };
-    // console.log(data);
+    // ;
     setCourseData(data);
   };
 
   const handleCourseCreate = async (e: any) => {
     const data = courseData;
-    console.log(data);
+
     if (!isLoading) {
       await createCourse(data);
     }
@@ -145,6 +145,7 @@ const CreateCourse = (props: Props) => {
         )}
         {active === 3 && (
           <CoursePreview
+            isEdit={false}
             courseData={courseData}
             active={active}
             setActive={setActive}
