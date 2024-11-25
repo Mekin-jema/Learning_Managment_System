@@ -4,8 +4,7 @@ import AdminSidbar from "@/app/components/Admin/AdminSidbar";
 import DashboeardHero from "@/app/components/Admin/sidebar/DashboeardHero";
 import Heading from "@/app/utils/Heading";
 import { useParams } from "next/navigation";
-import EditHero from "../../components/Admin/hero/EditHereo";
-
+import EditHero from "@/app/components/Admin/hero/EditHereo";
 const page = () => {
   const params = useParams();
   const id = params?.id;

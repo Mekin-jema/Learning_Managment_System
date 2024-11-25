@@ -21,6 +21,6 @@ router.put(
   authorizeRoles("admin"),
   editLayout
 );
-router.get("/get-layout-by-type", updateAccessToken, getLayoutByType);
+router.get("/get-layout/:type", updateAccessToken, getLayoutByType);
 
 export default router;

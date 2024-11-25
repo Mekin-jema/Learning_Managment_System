@@ -79,54 +79,42 @@ export const createLayout = CatchAsyncError(
 export const editLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { type, banner } = req.body;
+      const { type } = req.body;
 
       if (type === "Banner") {
         // Check if a Banner layout already exists
         const bannerData: any = await Layout.findOne({ type: "Banner" });
 
-        const { image, title, subtitle } = banner[0]; // Extract details from the first banner item
+        const { image, title, subTitle } = req.body; // Extract details from the first banner item
 
-        if (bannerData?.image?.public_id) {
-          // Remove the existing image from Cloudinary
-          await cloudinary.uploader.destroy(bannerData.image.public_id);
-        }
-
-        // Upload the new image to Cloudinary
-        const myCloud = await cloudinary.uploader.upload(image, {
-          folder: "layout",
-        });
-
-        // Prepare the updated banner data
-        const updatedBanner = {
-          image: {
-            public_id: myCloud.public_id,
-            url: myCloud.url,
-          },
-          title,
-          subtitle,
+        // Determine whether to upload a new image or use the existing one
+        let uploadedImage = {
+          public_id: bannerData.banner.image.public_id,
+          url: bannerData.banner.image.url,
         };
 
-        if (bannerData) {
-          // Update existing Banner layout
-          await Layout.findByIdAndUpdate(bannerData._id, {
-            banner: updatedBanner,
+        if (!image.startsWith("https")) {
+          const uploadResult = await cloudinary.uploader.upload(image, {
+            folder: "Layout",
           });
-          res.status(200).json({
-            success: true,
-            message: "Banner layout updated successfully",
-          });
-        } else {
-          // Create new Banner layout
-          await Layout.create({ type: "Banner", banner: updatedBanner });
-          res.status(201).json({
-            success: true,
-            message: "Banner layout created successfully",
-          });
+          uploadedImage = {
+            public_id: uploadResult.public_id,
+            url: uploadResult.secure_url,
+          };
         }
-      } else {
-        return next(new ErrorHandler(400, "Unsupported layout type"));
+
+        // Construct the banner object
+        const banner = {
+          type: "Banner",
+          image: uploadedImage,
+          title,
+          subTitle,
+        };
+
+        // Update the existing Banner layout
+        await Layout.findByIdAndUpdate(bannerData._id, { banner });
       }
+
       if (type === "FAQ") {
         const { faq } = req.body;
         const FaqItems = await Layout.findOne({ type: "FAQ" });
@@ -174,7 +162,7 @@ export const editLayout = CatchAsyncError(
 export const getLayoutByType = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const type = req.body.type;
+      const type = req.params.type;
       const layout = await Layout.findOne({ type });
       res.status(201).json({
         success: true,
