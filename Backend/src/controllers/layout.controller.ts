@@ -14,21 +14,30 @@ export const createLayout = CatchAsyncError(
           new ErrorHandler(400, `${type} is aleady exist in the database`)
         );
       }
+
       if (type === "Banner") {
-        const { image, title, subtitle } = req.body;
+        // Check if a Banner layout already exists
+        const { image, title, subTitle } = req.body;
         const myCloud = await cloudinary.uploader.upload(image, {
-          folder: "layout",
+          folder: "Layout",
         });
+
+        // Prepare the updated banner data
+
         const banner = {
-          image: {
-            public_id: myCloud.public_id,
-            url: myCloud.url,
+          type: "Banner",
+          banner: {
+            image: {
+              public_id: myCloud.public_id,
+              url: myCloud.secure_url,
+            },
+            title,
+            subTitle,
           },
-          title,
-          subtitle,
         };
         await Layout.create(banner);
       }
+
       if (type === "FAQ") {
         const { faq } = req.body;
         const faqItems = await Promise.all(
@@ -70,17 +79,26 @@ export const createLayout = CatchAsyncError(
 export const editLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { type } = req.body;
+      const { type, banner } = req.body;
 
       if (type === "Banner") {
+        // Check if a Banner layout already exists
         const bannerData: any = await Layout.findOne({ type: "Banner" });
-        const { image, title, subtitle } = req.body;
 
-        await cloudinary.uploader.destroy(bannerData?.image.public_id);
+        const { image, title, subtitle } = banner[0]; // Extract details from the first banner item
+
+        if (bannerData?.image?.public_id) {
+          // Remove the existing image from Cloudinary
+          await cloudinary.uploader.destroy(bannerData.image.public_id);
+        }
+
+        // Upload the new image to Cloudinary
         const myCloud = await cloudinary.uploader.upload(image, {
           folder: "layout",
         });
-        const banner = {
+
+        // Prepare the updated banner data
+        const updatedBanner = {
           image: {
             public_id: myCloud.public_id,
             url: myCloud.url,
@@ -88,7 +106,26 @@ export const editLayout = CatchAsyncError(
           title,
           subtitle,
         };
-        await Layout.findByIdAndUpdate(bannerData._id, { banner });
+
+        if (bannerData) {
+          // Update existing Banner layout
+          await Layout.findByIdAndUpdate(bannerData._id, {
+            banner: updatedBanner,
+          });
+          res.status(200).json({
+            success: true,
+            message: "Banner layout updated successfully",
+          });
+        } else {
+          // Create new Banner layout
+          await Layout.create({ type: "Banner", banner: updatedBanner });
+          res.status(201).json({
+            success: true,
+            message: "Banner layout created successfully",
+          });
+        }
+      } else {
+        return next(new ErrorHandler(400, "Unsupported layout type"));
       }
       if (type === "FAQ") {
         const { faq } = req.body;
@@ -107,18 +144,19 @@ export const editLayout = CatchAsyncError(
         });
       }
       if (type === "Categories") {
-        const { Categories } = req.body;
+        const { categories } = req.body;
         const Cat = await Layout.findOne({ type: "Categories" });
-        const Cate = await Promise.all(
-          Categories?.map(async (item: any) => {
+        const categoriesItems = await Promise.all(
+          categories.map(async (item: any) => {
             return {
-              title: item.title,
+              name: item.name,
+              description: item.description,
             };
           })
         );
         await Layout.findByIdAndUpdate(Cat?._id, {
           type: "Categories",
-          categories: Cate,
+          categories: categoriesItems,
         });
       }
 

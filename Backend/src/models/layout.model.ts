@@ -35,7 +35,7 @@ const CategorySchema = new Schema<Category>({
 
 const BannerImageSchema = new Schema<BannerImage>({
   public_id: { type: String },
-  url: { types: String },
+  url: { type: String },
 });
 
 const LayoutSchema = new Schema<Layout>({

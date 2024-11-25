@@ -16,6 +16,7 @@ import {
 } from "../utils/jwt";
 import { getAllUsersService, getUserById } from "../services/user.service";
 import { v2 as cloudinary } from "cloudinary";
+import mongoose from "mongoose";
 
 dotenv.config();
 interface IRegistirationBody {
@@ -457,12 +458,20 @@ export const updateUserRole = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, role } = req.body;
-      const user = await User.find({ email });
-      if (!user) {
-        return next(new ErrorHandler(400, "User not found"));
-      }
-      const id = user[0]._id;
-      await User.findByIdAndUpdate(id, { role }, { new: true });
+
+      const user = await User.findOne({ email });
+      // if (!user) {
+      //   await User.create({
+      //     email,
+      //     role,
+      //     name: name || email.split("@")[0],
+      //     password:
+      //       password ||
+      //       email + Math.floor(1000 + Math.random() * 9000).toString(),
+      //   });
+      // } else {
+      await User.findByIdAndUpdate(user?._id, { role }, { new: true });
+      // }
       res.status(200).json({
         success: true,
         message: "User role updated successfully",
@@ -478,20 +487,28 @@ export const updateUserRole = CatchAsyncError(
 export const deleteUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const id = req.params.id;
+      const id = req.params.id.trim(); // Ensure no extra spaces or newlines
       console.log(id);
-      const user = await User.findById(id);
+
+      // Validate the ObjectId format
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return next(new ErrorHandler(400, "Invalid user ID format"));
+      }
+
+      const user = await User.findById(id); // Pass the id directly
       if (!user) {
         return next(new ErrorHandler(400, "User not found"));
       }
-      await user.deleteOne({ id });
+
+      await user.deleteOne(); // No need to pass an id for deletion
       await redis.del(id);
+
       res.status(200).json({
         success: true,
         message: "User deleted successfully",
       });
     } catch (error: any) {
-      return next(new ErrorHandler(400, error.message));
+      return next(new ErrorHandler(500, error.message));
     }
   }
 );

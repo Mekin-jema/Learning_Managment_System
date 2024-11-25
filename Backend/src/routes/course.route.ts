@@ -14,7 +14,6 @@ import {
   getAdminCourses,
 } from "../controllers/course.controller";
 import { authorizeRoles, isAuthenticated } from "../middlewares/auth";
-import { getCouresAnalytics } from "../controllers/analytics.controller";
 import { updateAccessToken } from "../controllers/user.controller";
 
 const router = express.Router();
@@ -41,7 +40,7 @@ router.get(
   getSingleCourse
 );
 router.get(
-  "/get-user-course",
+  "/get-user-courses",
   updateAccessToken,
   isAuthenticated,
   getRestrictedCourses
@@ -52,8 +51,13 @@ router.get(
   isAuthenticated,
   getCoursesByUser
 );
-router.put("/add-question", updateAccessToken, isAuthenticated, addQuestion);
-router.put("/add-answer", updateAccessToken, isAuthenticated, addAnswer);
+router.put("/add-questions", updateAccessToken, isAuthenticated, addQuestion);
+router.put(
+  "/add-reply-to-questions",
+  updateAccessToken,
+  isAuthenticated,
+  addAnswer
+);
 router.post(
   "/add-review/:id",
   updateAccessToken,

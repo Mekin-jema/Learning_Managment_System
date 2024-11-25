@@ -35,11 +35,11 @@ router.put(
   "/update-user-password",
   updateAccessToken,
   isAuthenticated,
-  isAuthenticated,
+
   updatePassword
 );
 router.put(
-  "/update-profile",
+  "/update-user-profile",
   updateAccessToken,
   isAuthenticated,
   updateProfile

@@ -46,32 +46,29 @@ export const uploadCourse = CatchAsyncError(
 export const editCourse = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const courseId = req.params.id;
-      console.log(courseId);
-      if (!mongoose.Types.ObjectId.isValid(courseId)) {
-        return next(new ErrorHandler(400, "Invalid Course ID"));
-      }
-
-      const courseExist = await Course.findById(courseId);
-      if (!courseExist) {
-        return next(new ErrorHandler(404, "Course is not found"));
-      }
       const data = req.body;
-      console.log(data);
-      const { thumbnail } = data;
-
-      if (thumbnail && thumbnail.public_id) {
-        await cloudinary.uploader.destroy(thumbnail.public_id);
+      const thumbnail = data.thumbnail;
+      const courseId = req.params.id;
+      const courseData = (await Course.findById(courseId)) as any;
+      if (thumbnail && !thumbnail.startsWith("https")) {
+        await cloudinary.uploader.destroy(courseData.thumbnail.public_id);
         const myCloud = await cloudinary.uploader.upload(thumbnail, {
           folder: "courses",
         });
+
         data.thumbnail = {
           public_id: myCloud.public_id,
           url: myCloud.secure_url,
         };
       }
+      // if (thumbnail.startsWith("https")) {
+      //   data.thumbnail = {
+      //     public_id: courseData.thumbnail.public_id,
+      //     url: courseData.thumbnail.url,
+      //   };
+      // }
 
-      const updatedCourse = await Course.findByIdAndUpdate(
+      const course = await Course.findByIdAndUpdate(
         courseId,
         {
           $set: data, // update the course with the data
@@ -80,14 +77,14 @@ export const editCourse = CatchAsyncError(
           new: true, // means return the updated course
         }
       );
-      if (!updatedCourse) {
+      if (!course) {
         return next(new ErrorHandler(404, "Course not found with this ID"));
       }
 
       res.status(200).json({
         success: true,
         message: "Course updated successfully",
-        updatedCourse,
+        course,
       });
     } catch (error: any) {
       console.error("Error in editCourse:", error);
@@ -165,6 +162,7 @@ export const getCoursesByUser = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const userCourseList = req.user?.courses;
+      console.log(userCourseList);
       const courseId = req.params.id;
       const courseExist = userCourseList?.find(
         (course) => course.courseId === courseId
@@ -218,20 +216,20 @@ export const addQuestion = CatchAsyncError(
         return next(new ErrorHandler(404, "Content not found with this ID"));
       }
       //create a new question object
-      const newQuestion: any = {
-        question,
-        user: req.user,
-        questionReplies: [],
-      };
+      // const newQuestion: any = {
+      //   question,
+      //   user: req.user,
+      //   questionReplies: [],
+      // };
       //save the updated course
 
       //add this question to course content
-      courseContent.questions.push(newQuestion);
-      await Notifiation.create({
-        user: req.user?._id,
-        title: "New Question received",
-        message: `${req.user?.name} has asked a question on ${courseContent.title}`,
-      });
+      // courseContent.questions.push(newQuestion);
+      // await Notifiation.create({
+      //   user: req.user?._id,
+      //   title: "New Question received",
+      //   message: `${req.user?.name} has asked a question on ${courseContent.title}`,
+      // });
       res.status(200).json({
         success: true,
         message: "Question added successfully",
@@ -287,7 +285,7 @@ export const addAnswer = CatchAsyncError(
       await course?.save();
 
       //not that question  user  type must be user model type
-      if (req.user?._id === question.user._id) {
+      if (req.user?._id !== question.user._id) {
         //if user is same who asked the question then do not send notification
         //create notifiation  when the notifiction model is create it will doone
         await Notifiation.create({

@@ -25,7 +25,7 @@ const AllUsers = ({ isTeam }: props) => {
     isSuccess: success,
     error: getUserError,
   } = useGetAllUsersQuery({}, { refetchOnMountOrArgChange: true });
-  const [userId, setUserId] = useState();
+  const [userId, setUserId] = useState<string | undefined>();
   const [deleteUser, { isSuccess, error }] = useDeleteUserMutation();
   const [updateUserRole, { isSuccess: updateSuccess }] =
     useUpdateUserRoleMutation();
@@ -34,9 +34,15 @@ const AllUsers = ({ isTeam }: props) => {
   const [active, setActive] = useState(false);
 
   useEffect(() => {
-    if (success) {
-      refetch();
+    if (error) {
+      if ("data" in error) {
+        const errorMessage = error as any;
+        toast.error(errorMessage.data.message);
+      }
     }
+  }, [error]);
+
+  useEffect(() => {
     if (isSuccess) {
       refetch();
       toast.success("User Deleted Successfully");
@@ -44,14 +50,15 @@ const AllUsers = ({ isTeam }: props) => {
     if (updateSuccess) {
       refetch();
       toast.success("User Role Updated Successfully");
+      setActive(false);
     }
-    if (error) {
-      if ("data" in error) {
-        const errorMessage = error as any;
-        toast.error(errorMessage.data.message);
-      }
+  }, [isSuccess, updateSuccess]);
+
+  useEffect(() => {
+    if (success) {
+      refetch();
     }
-  }, [isSuccess, error, getUserError, updateSuccess]);
+  }, [success]);
 
   const columns = [
     { field: "name", headerName: "Name", flex: 0.5 },
@@ -145,9 +152,12 @@ const AllUsers = ({ isTeam }: props) => {
     e.preventDefault();
     setActive(!active);
     const email = e.target[0].value;
-    const role = e.target[1].value;
-    // console.log(email, role);
-    await updateUserRole({ email, role });
+    const name = e.target[1].value;
+    const password = e.target[2].value;
+    const role = e.target[3].value;
+
+    console.log(email, role, password, name);
+    await updateUserRole({ email, role, password, name });
   };
   return (
     <div className="mt-[120px]">
@@ -160,7 +170,7 @@ const AllUsers = ({ isTeam }: props) => {
               className={`${styles.button} !w-[220px] !cursor-pointer`}
               onClick={() => setActive(!active)}
             >
-              Add New Member
+              Update User Role
             </div>
           </div>
           <Box
@@ -268,6 +278,18 @@ const AllUsers = ({ isTeam }: props) => {
                     type="email"
                     className={`${styles.input} mb-4`}
                     placeholder="Email"
+                    required
+                  />
+                  <input
+                    type="text"
+                    className={`${styles.input} mb-4`}
+                    placeholder="name"
+                    required
+                  />
+                  <input
+                    type="password"
+                    className={`${styles.input} mb-4`}
+                    placeholder="password"
                     required
                   />
                   <select
