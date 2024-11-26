@@ -274,7 +274,7 @@ const Sidebar = () => {
             </Typography>
             <Item
               title=" Courses Analytics"
-              to="/admin/coures-analytics"
+              to="/admin/courses-analytics"
               selected={selected}
               setSelected={setSelected}
               icon={<BarChartOutlined />}

@@ -1,5 +1,6 @@
 import { styles } from "@/app/style/style";
-import React, { useState } from "react";
+import { useGetHeroDataQuery } from "@/Redux/features/layout/layoutApi";
+import React, { useEffect, useState } from "react";
 
 type Props = {
   courseInfo: any;
@@ -47,7 +48,18 @@ const CourseInformation = ({
   setActive,
 }: Props) => {
   const [dragging, setDragging] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  const { data, isLoading, refetch } = useGetHeroDataQuery("Categories", {
+    refetchOnMountOrArgChange: true,
+  });
+  useEffect(() => {
+    if (data) {
+      setCategories(data?.layout?.categories);
+    }
+  }, [data]);
   const handleSubmit = (e: any) => {
+    console.log(courseInfo);
     e.preventDefault();
     setActive(active + 1);
   };
@@ -184,24 +196,47 @@ const CourseInformation = ({
           </div>
         </div>
         <br />
-        <div>
-          <label className={`${styles.label}`}>Course Tag</label>
-
-          <input
-            type="text"
-            name=""
-            required
-            value={courseInfo.tags}
-            onChange={(e) =>
-              setCourseInfo({ ...courseInfo, tags: e.target.value })
-            }
-            id="price"
-            placeholder="MERN,NEXT 13 ,SOcket io, Tailwind css ,LMS"
-            className={`${styles.input}`}
-          />
-        </div>
         <div className="w-full flex justify-between">
           <div className="w-[45%]">
+            <label className={`${styles.label}`}>Course Tag</label>
+
+            <input
+              type="text"
+              name=""
+              required
+              value={courseInfo.tags}
+              onChange={(e) =>
+                setCourseInfo({ ...courseInfo, tags: e.target.value })
+              }
+              id="price"
+              placeholder="MERN,NEXT 13 ,SOcket io, Tailwind css ,LMS"
+              className={`${styles.input}`}
+            />
+          </div>
+          <div className="w-[45%]">
+            <label htmlFor="" className={`${styles.label}`}>
+              Course Categories
+            </label>
+            <select
+              name=""
+              id=""
+              className={`${styles.input} bg-black text-white`}
+              value={courseInfo.categories}
+              onChange={(e) =>
+                setCourseInfo({ ...courseInfo, categories: e.target.value })
+              }
+            >
+              {categories.map((item: any) => (
+                <option value={item.title} key={item._id}>
+                  {item.title}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="w-full flex justify-between">
+          <div className="w-[45%] ">
             <label htmlFor="" className={`${styles.label}`}>
               Course level
             </label>
@@ -218,7 +253,7 @@ const CourseInformation = ({
               className={`${styles.input}`}
             />
           </div>
-          <div className="w-[45%]">
+          <div className="w-[45%] ">
             <label htmlFor="" className={`${styles.label}`}>
               Demo Url
             </label>

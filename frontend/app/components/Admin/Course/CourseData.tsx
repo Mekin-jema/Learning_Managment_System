@@ -2,6 +2,8 @@ import { styles } from "@/app/style/style";
 
 import { AddCircle } from "../sidebar/Icon";
 import toast from "react-hot-toast";
+import { useGetHeroDataQuery } from "@/Redux/features/layout/layoutApi";
+import { useEffect, useState } from "react";
 
 type Props = {
   benefits: { title: string }[];
@@ -26,6 +28,9 @@ const CourseData = ({
     );
     setBenefits(updatedBenefits);
   };
+  const { data, isLoading, refetch } = useGetHeroDataQuery("Categories", {
+    refetchOnMountOrArgChange: true,
+  });
 
   const handleAddBenefit = () => {
     setBenefits([...benefits, { title: "" }]);
