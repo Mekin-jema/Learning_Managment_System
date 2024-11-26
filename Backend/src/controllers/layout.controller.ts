@@ -3,6 +3,7 @@ import ErrorHandler from "../utils/ErrorHandler";
 import { CatchAsyncError } from "../middlewares/catchAsynchErrors";
 import Layout from "../models/layout.model";
 import { v2 as cloudinary } from "cloudinary";
+import { title } from "process";
 
 export const createLayout = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -36,7 +37,8 @@ export const createLayout = CatchAsyncError(
           },
         };
         await Layout.create(banner);
-      } else if (type === "FAQ") {
+      }
+      if (type === "FAQ") {
         const { faq } = req.body;
         const faqItems = await Promise.all(
           faq.map(async (item: any) => {
@@ -47,10 +49,12 @@ export const createLayout = CatchAsyncError(
           })
         );
         await Layout.create({ type: "FAQ", faq: faqItems });
-      } else {
+      }
+      if (type === "Categories") {
         const { categories } = req.body;
+        console.log(categories);
         const categoriesItems = await Promise.all(
-          categories.map(async (item: any) => {
+          categories?.map(async (item: any) => {
             return {
               title: item.title,
             };
@@ -114,7 +118,7 @@ export const editLayout = CatchAsyncError(
 
       if (type === "FAQ") {
         const { faq } = req.body;
-        console.log(faq);
+        // console.log(faq);
         const FaqItems = await Layout.findOne({ type: "FAQ" });
         const faqItems = await Promise.all(
           faq.map(async (item: any) => {
@@ -131,12 +135,12 @@ export const editLayout = CatchAsyncError(
       }
       if (type === "Categories") {
         const { categories } = req.body;
+        console.log(categories);
         const Cat = await Layout.findOne({ type: "Categories" });
         const categoriesItems = await Promise.all(
           categories.map(async (item: any) => {
             return {
-              name: item.name,
-              description: item.description,
+              title: item.title,
             };
           })
         );
@@ -162,7 +166,7 @@ export const getLayoutByType = CatchAsyncError(
     try {
       const type = req.params.type;
       const layout = await Layout.findOne({ type });
-      console.log(layout);
+      // console.log(layout);
       res.status(201).json({
         success: true,
         layout,
