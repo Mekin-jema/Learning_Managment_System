@@ -36,9 +36,7 @@ export const createLayout = CatchAsyncError(
           },
         };
         await Layout.create(banner);
-      }
-
-      if (type === "FAQ") {
+      } else if (type === "FAQ") {
         const { faq } = req.body;
         const faqItems = await Promise.all(
           faq.map(async (item: any) => {
@@ -49,8 +47,7 @@ export const createLayout = CatchAsyncError(
           })
         );
         await Layout.create({ type: "FAQ", faq: faqItems });
-      }
-      if (type === "Categories") {
+      } else {
         const { categories } = req.body;
         const categoriesItems = await Promise.all(
           categories.map(async (item: any) => {
@@ -117,6 +114,7 @@ export const editLayout = CatchAsyncError(
 
       if (type === "FAQ") {
         const { faq } = req.body;
+        console.log(faq);
         const FaqItems = await Layout.findOne({ type: "FAQ" });
         const faqItems = await Promise.all(
           faq.map(async (item: any) => {
@@ -164,6 +162,7 @@ export const getLayoutByType = CatchAsyncError(
     try {
       const type = req.params.type;
       const layout = await Layout.findOne({ type });
+      console.log(layout);
       res.status(201).json({
         success: true,
         layout,
