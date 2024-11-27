@@ -6,6 +6,7 @@ import Heading from "../utils/Heading";
 import AdminProtected from "../hooks/adminProtected";
 import AdminSidbar from "../components/Admin/AdminSidbar";
 import DashboardHero from "../components/Admin/sidebar/DashboeardHero";
+import UserAnalytics from "../components/Admin/analytics/UserAnalytics";
 
 type Props = {};
 
@@ -21,11 +22,9 @@ const Page = (props: Props) => {
         />
         <div className="flex h-[200vh]">
           <div className="w-1/5 xl:w-[16%]">
-        
             <AdminSidbar />
           </div>
           <div className="w-4/5">
-          
             <DashboardHero />
           </div>
         </div>

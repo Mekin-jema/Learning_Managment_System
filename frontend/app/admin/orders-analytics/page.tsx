@@ -1,11 +1,11 @@
 "use client";
 
 import AdminSidbar from "@/app/components/Admin/AdminSidbar";
+import OrdersAnalytics from "@/app/components/Admin/analytics/OrdersAnalytics";
 import DashboeardHero from "@/app/components/Admin/sidebar/DashboeardHero";
 import Heading from "@/app/utils/Heading";
-import { useParams } from "next/navigation";
-import UserAnalytics from "@/app/components/Admin/analytics/UserAnalytics";
 
+import { useParams } from "next/navigation";
 const page = () => {
   const params = useParams();
   const id = params?.id;
@@ -22,7 +22,7 @@ const page = () => {
         </div>
         <div className="w-[85%]">
           {/* <CreateCourse /> */}
-          <UserAnalytics isDashboard={false} />
+          <OrdersAnalytics isDashboard={false} />
         </div>
         <DashboeardHero />
       </div>

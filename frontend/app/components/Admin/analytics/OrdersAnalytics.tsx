@@ -1,37 +1,54 @@
 import React from "react";
+
 import {
+  LineChart,
+  Line,
   ResponsiveContainer,
   XAxis,
   YAxis,
   Tooltip,
-  AreaChart,
-  Area,
   Legend,
+  CartesianGrid,
 } from "recharts";
 import Loader from "../../Loader/Loader";
-import { useGetUsersAnalyticsQuery } from "@/Redux/features/analytics/analyticsApi";
+import { useGetOrdersAnalyticsQuery } from "@/Redux/features/analytics/analyticsApi";
 import { styles } from "@/app/style/style";
-
-const analyticsData = [
-  { name: "January 2023", count: 440 },
-  { name: "February 2023", count: 8200 },
-  { name: "March 2023", count: 4033 },
-  { name: "April 2023", count: 2042 },
-  { name: "May 2023", count: 3454 },
-  { name: "June 2023", count: 356 },
-  { name: "July 2023", count: 5667 },
-  { name: "August 2023", count: 1320 },
-  { name: "September 2023", count: 6536 },
-  { name: "October 2023", count: 5480 },
-  { name: "November 2023", count: 485 },
+const OrdersData = [
+  {
+    name: "Page A",
+    Count: 4000,
+  },
+  {
+    name: "Page B",
+    Count: 3000,
+  },
+  {
+    name: "Page C",
+    Count: 2000,
+  },
+  {
+    name: "Page D",
+    Count: 2780,
+  },
+  {
+    name: "Page E",
+    Count: 1890,
+  },
+  {
+    name: "Page F",
+    Count: 2390,
+  },
+  {
+    name: "Page G",
+    Count: 3490,
+  },
 ];
 
 type Props = {
   isDashboard: boolean;
 };
-
-const UserAnalytics = ({ isDashboard }: Props) => {
-  const { data, isLoading } = useGetUsersAnalyticsQuery({});
+const OrdersAnalytics = ({ isDashboard }: Props) => {
+  const { data, isLoading } = useGetOrdersAnalyticsQuery({});
 
   return (
     <div>
@@ -62,11 +79,10 @@ const UserAnalytics = ({ isDashboard }: Props) => {
               isDashboard ? "h-[300px]" : "h-[500px]"
             } flex items-center justify-center`}
           >
-            {data?.users?.last12Months?.length > 0 ||
-            analyticsData.length > 0 ? (
+            {data?.orders?.last12Months?.length > 0 || OrdersData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart
-                  data={data?.users?.last12Months || analyticsData}
+                <LineChart
+                  data={data?.orders?.last12Months || OrdersData}
                   margin={{
                     top: 20,
                     right: 30,
@@ -79,13 +95,14 @@ const UserAnalytics = ({ isDashboard }: Props) => {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip />
-                  <Area
+                  <CartesianGrid stroke="#f5f5f5" />
+                  <Line
                     type="monotone"
                     dataKey="count"
                     stroke="#466289"
                     fill="#3faf82"
                   />
-                </AreaChart>
+                </LineChart>
               </ResponsiveContainer>
             ) : (
               <p>No data available</p>
@@ -97,4 +114,4 @@ const UserAnalytics = ({ isDashboard }: Props) => {
   );
 };
 
-export default UserAnalytics;
+export default OrdersAnalytics;
